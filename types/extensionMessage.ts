@@ -1,7 +1,7 @@
 import { MemberType } from "./member.type";
 import { ProfileType } from "./profile.type";
 import { PlaylistType, VideoType } from "./video.type";
-import { PlayerStateType, PlayerType } from "types/player.type";
+import { PlayerType } from "types/player.type";
 
 export enum ExtensionMessageType {
     PRIMARY_TAB_SET = "PRIMARY_TAB_SET",
@@ -10,12 +10,14 @@ export enum ExtensionMessageType {
     GET_PROFILE = "GET_PROFILE",
     UPDATE_PROFILE = "UPDATE_PROFILE",
     CREATE_ROOM = "CREATE_ROOM",
+    GO_TO_VIDEO = "GO_TO_VIDEO",
     SWITCH_TO_PRIMARY_TAB = "SWITCH_TO_PRIMARY_TAB",
     IS_PRIMARY_TAB_EXISTS = "IS_PRIMARY_TAB_EXISTS",
     IS_PRIMARY_TAB = "IS_PRIMARY_TAB",
     // Room
     GET_IS_ADMIN = "GET_ADMIN_STATUS",
     ADMIN_STATUS_UPDATED = "ADMIN_STATUS_UPDATED",
+    KICKED = "KICKED",
     GET_PLAYLIST = "GET_PLAYLIST",
     PLAYLIST_UPDATED = "PLAYLIST_UPDATED",
     UPDATE_PLAYLIST = "UPDATE_PLAYLIST",
@@ -50,6 +52,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.IS_PRIMARY_TAB_EXISTS]: void;
     [ExtensionMessageType.IS_PRIMARY_TAB]: void;
     [ExtensionMessageType.CREATE_ROOM]: { videoUrl: string };
+    [ExtensionMessageType.GO_TO_VIDEO]: string;
     // Room
     [ExtensionMessageType.GET_IS_ADMIN]: void;
     [ExtensionMessageType.ADMIN_STATUS_UPDATED]: boolean;
@@ -63,11 +66,13 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.PROMOTE_MEMBER]: string;
     [ExtensionMessageType.REMOVE_MEMBER]: string;
     // Player
-    [ExtensionMessageType.UPDATE_PLAYER_STATE]: PlayerStateType;
+    [ExtensionMessageType.UPDATE_PLAYER_STATE]: PlayerType;
     [ExtensionMessageType.PLAYER_STATE_UPDATED]: PlayerType;
-    // todo: also send updated_at
-    [ExtensionMessageType.UPDATE_PLAYER_VIDEO]: string;
-    [ExtensionMessageType.SKIP_CURRENT_VIDEO]: void;
+    [ExtensionMessageType.UPDATE_PLAYER_VIDEO]: {
+        videoId: string;
+        updatedAt: number;
+    };
+    [ExtensionMessageType.SKIP_CURRENT_VIDEO]: number;
     [ExtensionMessageType.GET_PLAYER_STATE]: void;
     [ExtensionMessageType.GET_PLAYER_VIDEO_URL]: void;
     [ExtensionMessageType.PLAYER_VIDEO_UPDATED]: string;
@@ -77,6 +82,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.UPDATE_READY]: boolean;
     [ExtensionMessageType.GET_LAST_VIDEO]: void;
     [ExtensionMessageType.GET_PLAYLIST]: void;
+    [ExtensionMessageType.KICKED]: void;
 };
 export type ExtensionMessageResponseMap = {
     [ExtensionMessageType.GET_PLAYLIST]: PlaylistType;
@@ -88,9 +94,10 @@ export type ExtensionMessageResponseMap = {
     [ExtensionMessageType.REMOVE_VIDEO]: string;
     [ExtensionMessageType.GET_ROOM_ID]: string;
     [ExtensionMessageType.GET_IS_ADMIN]: boolean;
-    [ExtensionMessageType.GET_PLAYER_STATE]: PlayerStateType;
+    [ExtensionMessageType.GET_PLAYER_STATE]: PlayerType;
     [ExtensionMessageType.GET_PLAYER_VIDEO_URL]: string;
     [ExtensionMessageType.GET_LAST_VIDEO]: VideoType | null;
+    [ExtensionMessageType.SKIP_CURRENT_VIDEO]: boolean;
 };
 
 export interface ExtensionMessage<T extends ExtensionMessageType> {

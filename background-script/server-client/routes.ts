@@ -23,3 +23,5 @@ serverClient.addHandler(FromServerMessageType.IS_ADMIN_UPDATED, Handler.isAdminU
 serverClient.addHandler(FromServerMessageType.PLAYER_STATE_UPDATED, Handler.playerStateUpdated);
 
 serverClient.addHandler(FromServerMessageType.PLAYER_VIDEO_UPDATED, Handler.playerVideoUpdated);
+
+serverClient.addCloseCodeHandler(4001, Handler.kickedFromRoom);

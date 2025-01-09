@@ -9,7 +9,7 @@ const Playlist: React.FC = () => {
     const [lastVideo, setLastVideo] = useState<IVideo>();
     const [currentVideoUrl, setCurrentVideoUrl] = useState<string>();
     const [videos, setVideos] = useState<IVideo[]>([]);
-    const { is_admin } = useAdmin();
+    const { isAdmin } = useAdmin();
 
     const messageClient = new ContentScriptMessagingClient();
 
@@ -69,14 +69,19 @@ const Playlist: React.FC = () => {
     return (
         <ul className="st-playlist m-0">
             {lastVideo && (
-                <Video videoId={lastVideo.id} videoUrl={lastVideo.url} last actions={is_admin} />
+                <Video
+                    videoId={lastVideo.id}
+                    videoUrl={lastVideo.url}
+                    type="last"
+                    isAdmin={isAdmin}
+                />
             )}
             {currentVideoUrl && (
                 <Video
                     videoId={currentVideoUrl}
                     videoUrl={currentVideoUrl}
-                    current
-                    actions={is_admin}
+                    type="current"
+                    isAdmin={isAdmin}
                 />
             )}
             {videos &&
@@ -87,7 +92,8 @@ const Playlist: React.FC = () => {
                         videoId={video.id}
                         videoUrl={video.url}
                         number={index + 1}
-                        actions={is_admin}
+                        type="number"
+                        isAdmin={isAdmin}
                     />
                 ))}
         </ul>

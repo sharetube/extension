@@ -18,7 +18,7 @@ export class ProfileStorage {
         return chrome.storage.sync.set({ [this.STORAGE_KEY]: profile });
     }
 
-    public get(): Promise<ProfileType> {
+    public async get(): Promise<ProfileType> {
         return chrome.storage.sync.get(this.STORAGE_KEY).then(result => {
             const profile = result[this.STORAGE_KEY];
             if (!profile) {

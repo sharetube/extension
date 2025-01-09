@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "version": "0.3.0",
-  "version_name": "0.3 beta (Oly)",
+  "version": "1.0.0",
+  "version_name": "1.0.0 beta (Oly)",
   "name": "ShareTube",
   "short_name": "ST",
-  "description": "A browser extension thats lets you watch yotube videos with friends in real-time! ",
-  "permissions": ["storage", "activeTab", "tabs", "scripting", "webNavigation"],
+  "author": "Sharetube team",
+  "description": "A browser extension that lets you watch yotube videos together with your friends in real-time!",
+  "permissions": ["storage", "tabs", "webNavigation"],
   "minimum_chrome_version": "116",
   "icons": {
     "16": "assets/icon16.png",
@@ -14,7 +15,7 @@
     "128": "assets/icon128.png"
   },
   "background": {
-    "service_worker": "./background-script/index.ts"
+    "service_worker": "background-script/index.ts"
   },
   "content_scripts": [
     {
@@ -25,7 +26,8 @@
     {
       "js": ["scripts/setVideo.ts"],
       "matches": ["https://*.youtube.com/*"],
-      "world": "MAIN"
+      "world": "MAIN",
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [
@@ -34,5 +36,14 @@
       "resources": ["pages/error.html", "pages/loading.html", "pages/cat-sleep.gif"],
       "use_dynamic_url": false
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "sharetube.team@gmail.com",
+      "strict_min_version": "78.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "79.0"
+    }
+  }
 }

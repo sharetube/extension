@@ -1,8 +1,7 @@
-import data from "../types/data";
+import VideoData from "../types/videoData.type";
 
-// todo: rename
-const video = (url: string, retries: number = 3): Promise<data> => {
-    const fetchVideoInfo = (attempt: number): Promise<data> =>
+const fetchVideo = (url: string, retries: number = 3): Promise<VideoData> => {
+    const func = (attempt: number): Promise<VideoData> =>
         fetch(`https://www.youtube.com/oembed?url=https://youtube.com/watch?v=${url}`)
             .then(res => res.json())
             .then(data => ({
@@ -12,11 +11,11 @@ const video = (url: string, retries: number = 3): Promise<data> => {
                 author_url: data.author_url,
             }))
             .catch(error => {
-                if (attempt < retries) return fetchVideoInfo(attempt + 1);
+                if (attempt < retries) return func(attempt + 1);
                 throw error;
             });
 
-    return fetchVideoInfo(0);
+    return func(0);
 };
 
-export default video;
+export default fetchVideo;

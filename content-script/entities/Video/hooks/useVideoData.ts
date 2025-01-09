@@ -1,13 +1,13 @@
-import video from "../api/Video";
-import data from "../types/data";
+import fetchVideo from "../api/fetchVideo";
+import VideoData from "../types/videoData.type";
 import { useEffect, useState } from "react";
 
 const useVideoData = (videoUrl: string) => {
     const [loading, setLoading] = useState(true);
-    const [videoData, setVideoData] = useState<data>({} as data);
+    const [videoData, setVideoData] = useState<VideoData>({} as VideoData);
 
     useEffect(() => {
-        video(videoUrl)
+        fetchVideo(videoUrl)
             .then(data => {
                 setVideoData(data);
                 setLoading(false);

@@ -1,38 +1,20 @@
+/* eslint-disable */
 import useVideoData from "./hooks/useVideoData";
-import data from "./types/data";
+import VideoData from "./types/videoData.type";
 import { ContentScriptMessagingClient } from "@shared/client/client";
 import Trash from "@shared/ui/Trash/Trash";
 import React, { useCallback } from "react";
 import { memo } from "react";
+import { dateNowInUs } from "shared/dateNowInUs";
 import { ExtensionMessageType } from "types/extensionMessage";
 
-interface Base {
+interface VideoProps {
     videoUrl: string;
     videoId: string;
-    actions: boolean;
+    isAdmin: boolean;
     number?: number;
-    last?: boolean;
-    current?: boolean;
+    type: "number" | "last" | "current";
 }
-
-// ?
-interface Last extends Base {
-    last: true;
-    current?: never;
-    number?: never;
-}
-interface Current extends Base {
-    current: true;
-    last?: never;
-    number?: never;
-}
-interface Common extends Base {
-    last?: never;
-    current?: never;
-    number: number;
-}
-
-type VideoProps = Current | Last | Common;
 
 const LoadingSkeleton: React.FC = () => (
     <li className="flex items-stretch p-[4px_8px_4px_0] animate-pulse">
@@ -47,32 +29,32 @@ const LoadingSkeleton: React.FC = () => (
     </li>
 );
 
-const VideoContent: React.FC<VideoProps & { videoData: data }> = memo(
+const VideoContent: React.FC<VideoProps & { videoData: VideoData }> = memo(
     ({ videoData, videoId, ...props }) => {
         const deleteVideo = useCallback(() => {
-            if (props.current || props.last || !props.actions) return;
+            if (props.type !== "number" || !props.isAdmin) return;
             ContentScriptMessagingClient.sendMessage(ExtensionMessageType.REMOVE_VIDEO, videoId);
-        }, [videoId, props.actions, props.current, props.last]);
+        }, [videoId, props.isAdmin, props.type]);
 
         const playVideo = useCallback(() => {
-            if (props.current || !props.actions) return;
-            ContentScriptMessagingClient.sendMessage(
-                ExtensionMessageType.UPDATE_PLAYER_VIDEO,
-                videoId,
-            );
-        }, [videoId, props.actions, props.current]);
+            if (props.type === "current" || !props.isAdmin) return;
+            ContentScriptMessagingClient.sendMessage(ExtensionMessageType.UPDATE_PLAYER_VIDEO, {
+                videoId: videoId,
+                updatedAt: dateNowInUs(),
+            });
+        }, [videoId, props.isAdmin, props.type]);
 
         return (
             <li
-                title={!props.current && props.actions ? "Play video" : undefined}
-                className={`${props.last ? "opacity-60 hover:opacity-100" : null} ${props.current ? "bg-background-active" : null} ${props.actions ? "hover:cursor-pointer" : null} select-none hover:bg-spec-badge-chip-background group flex items-stretch p-[4px_8px_4px_0]`}
-                onClick={!props.current && props.actions ? playVideo : undefined}
+                title={props.isAdmin && props.type !== "current" ? "Play video" : undefined}
+                className={`${props.type === "last" ? "opacity-60 hover:opacity-100" : null} ${props.type === "current" ? "bg-background-active" : null} ${props.isAdmin ? "hover:cursor-pointer" : null} select-none hover:bg-spec-badge-chip-background group flex items-stretch p-[4px_8px_4px_0]`}
+                onClick={props.isAdmin && props.type !== "current" ? playVideo : undefined}
             >
                 <div className="flex items-stretch">
                     <div className="flex">
                         <span className="m-auto w-[24px] p-0 text-center font-secondary text-[1.2rem] font-[400] leading-[1.5rem] text-text-secondary">
                             {props.number ? props.number : null}
-                            {props.current ? "▶" : null}
+                            {props.type === "current" ? "▶" : null}
                         </span>
                     </div>
                     <div>
@@ -91,7 +73,7 @@ const VideoContent: React.FC<VideoProps & { videoData: data }> = memo(
                     </article>
                 </div>
 
-                {props.actions && !props.current && !props.last && (
+                {props.isAdmin && props.type === "number" && (
                     <div className="ml-auto flex items-center justify-self-end hover:cursor-default">
                         <button
                             title="Remove video"
@@ -109,7 +91,6 @@ const VideoContent: React.FC<VideoProps & { videoData: data }> = memo(
     },
 );
 
-// todo: rename
 const Video: React.FC<VideoProps> = props => {
     const { loading, videoData } = useVideoData(props.videoUrl);
     return loading ? <LoadingSkeleton /> : <VideoContent {...props} videoData={videoData} />;

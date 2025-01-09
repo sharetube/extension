@@ -12,7 +12,7 @@
     --st-spec-base-background: var(--yt-spec-base-background);
     --st-spec-button-chip-background-hover: var(--yt-spec-button-chip-background-hover);
     --st-spec-menu-background: var(--yt-spec-menu-background);
-    --st-spec-outline: var(--yt-spec-outline);
+    --st-spec-outline: var(--yt-spec-10-percent-layer);
     --st-spec-wordmark-text: var(--yt-spec-wordmark-text);
     /* Fonts */
     --st-font-primary: "YouTube Sans", "Roboto", sans-serif;

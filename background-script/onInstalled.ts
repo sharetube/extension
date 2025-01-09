@@ -1,8 +1,8 @@
-import { PrimaryTabStorage } from "./primaryTabStorage";
 import { ProfileStorage } from "./profileStorage";
+import { TabStorage } from "./tabStorage";
 
 chrome.runtime.onInstalled.addListener(details => {
     console.log("onInstalled", details);
-    PrimaryTabStorage.getInstance().remove();
+    TabStorage.getInstance().unsetPrimaryTab();
     ProfileStorage.getInstance().get();
 });

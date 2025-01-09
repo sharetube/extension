@@ -36,7 +36,8 @@
     "background-script/**/*.ts",
     "background-script/**/*.tsx",
     "shared/**/*.ts",
-    "constants/**/*.ts"
+    "constants/**/*.ts",
+    "scripts/**/*.ts"
   ],
   "exclude": ["node_modules", "dist", ".yarn", ".husky", ".vscode"],
   "references": [{ "path": "./tsconfig.node.json" }]

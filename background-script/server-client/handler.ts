@@ -1,23 +1,34 @@
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
-import { PrimaryTabStorage } from "background-script/primaryTabStorage";
-import { globalState } from "background-script/state";
+import { globalState, resetState } from "background-script/state";
+import { TabStorage } from "background-script/tabStorage";
 import { takeTargetPrimaryTabId } from "background-script/targetPrimaryTabId";
 import { ExtensionMessageType } from "types/extensionMessage";
 import { FromServerMessagePayloadMap, FromServerMessageType } from "types/serverMessage";
 
 const bgMessagingClient = BackgroundMessagingClient.getInstance();
+const tabStorage = TabStorage.getInstance();
 
 export function joinedRoom(
     payload: FromServerMessagePayloadMap[FromServerMessageType.JOINED_ROOM],
 ): void {
+    resetState();
+    globalState.jwt = payload.jwt;
     globalState.room = payload.room;
     globalState.is_admin = payload.joined_member.is_admin;
 
-    const videoPageLink = `https://youtube.com/watch?v=${payload.room.player.video_url}`;
+    const videoPageLink = `https://youtube.com/watch?v=${payload.room.player.video_url}&t=0`;
     const targetPrimaryTabId = takeTargetPrimaryTabId();
     if (targetPrimaryTabId) {
         chrome.tabs.update(targetPrimaryTabId, { url: videoPageLink });
-        PrimaryTabStorage.getInstance().set(targetPrimaryTabId);
+        // bgMessagingClient.sendMessage(
+        //     targetPrimaryTabId,
+        //     ExtensionMessageType.GO_TO_VIDEO,
+        //     payload.room.player.video_url,
+        // );
+        // todo: skip that if target primary tab was primary tab
+        bgMessagingClient.broadcastMessage(ExtensionMessageType.PRIMARY_TAB_SET);
+        tabStorage.addTab(targetPrimaryTabId);
+        tabStorage.setPrimaryTab(targetPrimaryTabId);
     } else {
         console.error("No target primary tab found");
     }
@@ -87,10 +98,7 @@ export const isAdminUpdated = (
     payload: FromServerMessagePayloadMap[FromServerMessageType.IS_ADMIN_UPDATED],
 ): void => {
     globalState.is_admin = payload.is_admin;
-    bgMessagingClient.sendMessageToPrimaryTab(
-        ExtensionMessageType.ADMIN_STATUS_UPDATED,
-        payload.is_admin,
-    );
+    bgMessagingClient.broadcastMessage(ExtensionMessageType.ADMIN_STATUS_UPDATED, payload.is_admin);
 };
 
 export const playerStateUpdated = (
@@ -117,6 +125,12 @@ export const playerVideoUpdated = (
 ): void => {
     globalState.room.playlist = payload.playlist;
     globalState.room.player = payload.player;
+    globalState.room.members = payload.members;
+
+    bgMessagingClient.sendMessageToPrimaryTab(
+        ExtensionMessageType.PLAYER_VIDEO_UPDATED,
+        payload.player.video_url,
+    );
 
     bgMessagingClient.sendMessageToPrimaryTab(
         ExtensionMessageType.PLAYLIST_UPDATED,
@@ -124,8 +138,8 @@ export const playerVideoUpdated = (
     );
 
     bgMessagingClient.sendMessageToPrimaryTab(
-        ExtensionMessageType.PLAYER_VIDEO_UPDATED,
-        payload.player.video_url,
+        ExtensionMessageType.MEMBERS_UPDATED,
+        payload.members,
     );
 
     if (payload.playlist.last_video) {
@@ -134,4 +148,9 @@ export const playerVideoUpdated = (
             payload.playlist.last_video,
         );
     }
+};
+
+export const kickedFromRoom = (): void => {
+    console.log("kicked from room");
+    bgMessagingClient.sendMessageToPrimaryTab(ExtensionMessageType.KICKED);
 };

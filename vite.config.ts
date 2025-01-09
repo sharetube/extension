@@ -6,14 +6,15 @@ import { resolve } from "path";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-function manifestWorldMainFix(buildDir: string) {
+function fixManifestOut(buildDir: string, browser: string) {
     return {
-        name: "manifest-world-main-fix",
+        name: "out-manifest-fix",
         closeBundle() {
             const extPath = resolve(__dirname, buildDir);
             const manifestPath = `${extPath}/manifest.json`;
             const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 
+            // fix world:MAIN scripts
             for (let i = 0; i < manifest.content_scripts.length; i++) {
                 const contentScript = manifest.content_scripts[i];
                 if (contentScript.world == "MAIN") {
@@ -31,35 +32,57 @@ function manifestWorldMainFix(buildDir: string) {
                 }
             }
 
+            switch (browser) {
+                case "firefox":
+                    // fix manifest
+                    delete manifest.version_name;
+                    delete manifest.minimum_chrome_version;
+                    manifest.background.scripts = [manifest.background.service_worker];
+                    delete manifest.background.service_worker;
+
+                    manifest.web_accessible_resources.forEach(elem => {
+                        delete elem.use_dynamic_url;
+                    });
+                    break;
+                case "chrome":
+                    delete manifest.browser_specific_settings;
+                    break;
+            }
             fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
         },
     };
 }
 
-const outDir = "dist";
+const baseOutDir = "dist";
 
-export default defineConfig({
-    plugins: [
-        react(),
-        crx({ manifest }),
-        tsconfigPaths(),
-        { ...manifestWorldMainFix(outDir), enforce: "post" },
-    ],
-    resolve: {
-        alias: {
-            "@app": "/content-script/app/",
-            "@shared": "/content-script/shared",
-            "@widgets": "/content-script/widgets",
-            "@entities": "/content-script/entities",
-            "@tabs": "/content-script/tabs",
-            "@player": "/content-script/player",
-            constants: "/constants",
-            types: "/types",
-            config: "config.ts",
+export default defineConfig(({}) => {
+    const browser: string = process.env.BROWSER || "chrome";
+    const outDir = `${baseOutDir}/${browser}`;
+
+    return {
+        plugins: [
+            react(),
+            crx({ manifest }),
+            tsconfigPaths(),
+            { ...fixManifestOut(outDir, browser), enforce: "post" },
+        ],
+        resolve: {
+            alias: {
+                "@app": "/content-script/app/",
+                "@shared": "/content-script/shared",
+                "@widgets": "/content-script/widgets",
+                "@entities": "/content-script/entities",
+                "@tabs": "/content-script/tabs",
+                "@player": "/content-script/player",
+                scripts: "/scripts/",
+                constants: "/constants",
+                types: "/types",
+                config: "config.ts",
+            },
         },
-    },
-    assetsInclude: ["**/*.png"],
-    build: {
-        outDir: outDir,
-    },
+        assetsInclude: ["**/*.png"],
+        build: {
+            outDir: outDir,
+        },
+    };
 });

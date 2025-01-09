@@ -18,14 +18,21 @@ const Member: React.FC<MemberProps> = ({
     color,
     is_ready,
     is_muted,
-    ...props
+    is_admin,
 }) => {
-    const { is_admin } = useAdmin();
+    const { isAdmin: isAdminStatus } = useAdmin();
+    const [ignore, setIgnore] = React.useState(false); // used to ignore the click event after openMenu
     const [menu, setMenu] = React.useState(false);
 
     const handleClick = (e: MouseEvent) => {
-        if ((e.target as HTMLElement).classList.contains("st-member")) return;
-        setMenu(false);
+        if (ignore) {
+            setIgnore(false);
+            return;
+        }
+
+        if (menu && !(e.target as HTMLElement).classList.contains("st-member")) {
+            setMenu(false);
+        }
     };
 
     useEffect(() => {
@@ -43,39 +50,40 @@ const Member: React.FC<MemberProps> = ({
     }, [menu]);
 
     const openMenu = useCallback(() => {
-        if (!is_admin) return;
+        if (!isAdminStatus) return;
+        setIgnore(true);
         setMenu(true);
-    }, [is_admin]);
+    }, [isAdminStatus]);
 
     const promote = useCallback(() => {
-        if (!is_admin) return;
+        if (!isAdminStatus) return;
         setMenu(false);
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.PROMOTE_MEMBER, id);
-    }, [id, is_admin]);
+    }, [id, isAdminStatus]);
 
     const kick = useCallback(() => {
-        if (!is_admin) return;
+        if (!isAdminStatus) return;
         setMenu(false);
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.REMOVE_MEMBER, id);
-    }, [id, is_admin]);
+    }, [id, isAdminStatus]);
 
     return (
         <li className="relative">
             <div
-                className={`flex items-center  ${is_admin ? "hover:cursor-pointer" : "hover:cursor-default"} ${is_ready ? "" : "animate-pulse"}`}
+                className={`flex items-center  ${isAdminStatus ? "hover:cursor-pointer" : "hover:cursor-default"} ${is_ready ? "" : "animate-pulse"}`}
                 onClick={openMenu}
             >
                 <Avatar size="s" url={avatar_url} color={color} letter={username.slice(0, 1)} />
-                {/* Nickname */}
+                {/* Username */}
                 <p
                     className={`m-0 p-[0_0_0_8px] text-text-primary font-secondary leading-normal text-[1.25rem] font-medium`}
-                    style={{ color: color }}
+                    style={{ color }}
                 >
                     {username}
                 </p>
                 {/* Icons */}
                 <div className="flex items-center">
-                    {props.is_admin && (
+                    {is_admin && (
                         <div
                             className={`text-text-primary h-[14px] w-[12px] box-border m-[0_0_0_4px]`}
                         >
@@ -91,7 +99,7 @@ const Member: React.FC<MemberProps> = ({
                     )}
                 </div>
             </div>
-            {is_admin && menu && !props.is_admin && (
+            {isAdminStatus && menu && !is_admin && (
                 <div
                     className="st-member absolute top-[36px] left-0 w-[150px] rounded-lg shadow-box-shadow bg-spec-menu-background z-[2300] p-[8px_0]"
                     onClick={e => {
