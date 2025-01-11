@@ -24,17 +24,15 @@ const Popup: React.FC = () => {
     const contentScriptMessagingClient = new ContentScriptMessagingClient();
 
     useEffect(() => {
-        const handleDocumentClick = (e: MouseEvent) => handleClick(e);
-
         if (isExpanded) {
-            document.addEventListener("click", handleDocumentClick);
+            document.addEventListener("click", handleClick);
         } else {
-            document.removeEventListener("click", handleDocumentClick);
+            document.removeEventListener("click", handleClick);
             setIsProfileEdit(false);
         }
 
         return () => {
-            document.removeEventListener("click", handleDocumentClick);
+            document.removeEventListener("click", handleClick);
         };
     }, [isExpanded]);
 
@@ -59,7 +57,7 @@ const Popup: React.FC = () => {
     }, []);
 
     return (
-        <div className="sharetube st-popup h-[40px] w-[40px] box-border relative m-[0_8px_0_0]">
+        <div className="st-popup h-[40px] w-[40px] box-border relative m-[0_8px_0_0]">
             <div
                 className="hover:bg-spec-button-chip-background-hover hover:cursor-pointer text-spec-wordmark-text h-[40px] w-[40px] box-border flex rounded-full"
                 onClick={expandChange}

@@ -2,13 +2,14 @@ import Video from "@entities/Video/Video";
 import useAdmin from "@shared/Context/Admin/hooks/useAdmin";
 import { ContentScriptMessagingClient } from "@shared/client/client";
 import React, { useEffect, useState } from "react";
+import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { ExtensionMessageType } from "types/extensionMessage";
-import type { VideoType as IVideo, PlaylistType } from "types/video.type";
+import type { PlaylistType, VideoType } from "types/video.type";
 
 const Playlist: React.FC = () => {
-    const [lastVideo, setLastVideo] = useState<IVideo>();
+    const [lastVideo, setLastVideo] = useState<VideoType>();
     const [currentVideoUrl, setCurrentVideoUrl] = useState<string>();
-    const [videos, setVideos] = useState<IVideo[]>([]);
+    const [videos, setVideos] = useState<VideoType[]>([]);
     const { isAdmin } = useAdmin();
 
     const messageClient = new ContentScriptMessagingClient();
@@ -21,7 +22,7 @@ const Playlist: React.FC = () => {
             },
         );
 
-        messageClient.addHandler(ExtensionMessageType.LAST_VIDEO_UPDATED, (payload: IVideo) => {
+        messageClient.addHandler(ExtensionMessageType.LAST_VIDEO_UPDATED, (payload: VideoType) => {
             if (payload) setLastVideo(payload);
         });
 
@@ -66,8 +67,23 @@ const Playlist: React.FC = () => {
         };
     }, []);
 
+    const handleOnDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+
+        const newVideos = videos;
+        const [reorderedItem] = newVideos.splice(result.source.index, 1);
+        newVideos.splice(result.destination.index, 0, reorderedItem);
+
+        setVideos(newVideos);
+
+        ContentScriptMessagingClient.sendMessage(
+            ExtensionMessageType.REORDER_PLAYLIST,
+            newVideos.map(video => video.id),
+        );
+    };
+
     return (
-        <ul className="st-playlist m-0">
+        <div className="st-playlist m-0">
             {lastVideo && (
                 <Video
                     videoId={lastVideo.id}
@@ -84,19 +100,37 @@ const Playlist: React.FC = () => {
                     isAdmin={isAdmin}
                 />
             )}
-            {videos &&
-                videos.length > 0 &&
-                videos.map((video, index) => (
-                    <Video
-                        key={video.id}
-                        videoId={video.id}
-                        videoUrl={video.url}
-                        number={index + 1}
-                        type="number"
-                        isAdmin={isAdmin}
-                    />
-                ))}
-        </ul>
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+                <Droppable droppableId="playlist">
+                    {provided => (
+                        <ul {...provided.droppableProps} ref={provided.innerRef}>
+                            {videos &&
+                                videos.length > 0 &&
+                                videos.map((video, index) => (
+                                    <Draggable key={video.id} draggableId={video.id} index={index}>
+                                        {provided => (
+                                            <li
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                ref={provided.innerRef}
+                                            >
+                                                <Video
+                                                    key={video.id}
+                                                    videoId={video.id}
+                                                    videoUrl={video.url}
+                                                    number={index + 1}
+                                                    type="number"
+                                                    isAdmin={isAdmin}
+                                                />
+                                            </li>
+                                        )}
+                                    </Draggable>
+                                ))}
+                        </ul>
+                    )}
+                </Droppable>
+            </DragDropContext>
+        </div>
     );
 };
 

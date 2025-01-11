@@ -45,7 +45,7 @@ const VideoContent: React.FC<VideoProps & { videoData: VideoData }> = memo(
         }, [videoId, props.isAdmin, props.type]);
 
         return (
-            <li
+            <div
                 title={props.isAdmin && props.type !== "current" ? "Play video" : undefined}
                 className={`${props.type === "last" ? "opacity-60 hover:opacity-100" : null} ${props.type === "current" ? "bg-background-active" : null} ${props.isAdmin ? "hover:cursor-pointer" : null} select-none hover:bg-spec-badge-chip-background group flex items-stretch p-[4px_8px_4px_0]`}
                 onClick={props.isAdmin && props.type !== "current" ? playVideo : undefined}
@@ -86,7 +86,7 @@ const VideoContent: React.FC<VideoProps & { videoData: VideoData }> = memo(
                         </button>
                     </div>
                 )}
-            </li>
+            </div>
         );
     },
 );

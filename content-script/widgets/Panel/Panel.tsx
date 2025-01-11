@@ -7,8 +7,6 @@ import Share from "@shared/ui/Share/Share";
 import MemberList from "@widgets/Memberlist/Memberlist";
 import Playlist from "@widgets/Playlist/Playlist";
 import React, { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 const Panel: React.FC = () => {
     const { isFullScreen, height } = useResize();
@@ -22,8 +20,8 @@ const Panel: React.FC = () => {
 
     return (
         <div
+            className="st-panel m-0 box-border flex min-h-[400px] w-[100%] flex-col overflow-hidden rounded-[12px] border border-solid border-spec-outline"
             style={{ height: height }}
-            className="sharetube st-panel m-0 box-border flex min-h-[400px] w-[100%] flex-col overflow-hidden rounded-[12px] border border-solid border-spec-outline"
         >
             <header className="m-0 box-border flex w-[100%]  items-center justify-between bg-background-primary border-b border-solid border-spec-outline border-t-0 border-l-0 border-r-0 p-[5px_6px_5px_12px]">
                 <p className="m-0 select-none p-0 font-primary text-[2rem] font-semibold leading-[2.8rem]  text-text-primary">
@@ -56,9 +54,7 @@ const Panel: React.FC = () => {
                 <MemberList callback={setUserCount} />
             </div>
             <div className="flex-grow overflow-y-auto">
-                <DndProvider backend={HTML5Backend}>
-                    <Playlist />
-                </DndProvider>
+                <Playlist />
             </div>
         </div>
     );

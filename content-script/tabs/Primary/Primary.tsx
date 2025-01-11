@@ -55,10 +55,10 @@ function update() {
                         (
                             document.body.querySelector(
                                 "ytd-unified-share-panel-renderer yt-icon-button > button",
-                            ) as HTMLElement
+                            ) as HTMLButtonElement
                         ).click();
 
-                        setTimeout(() => (hideShareStyle.textContent = ``), 200);
+                        setTimeout(() => (hideShareStyle.textContent = ``), 400);
                     });
                 });
             } else {
@@ -89,7 +89,7 @@ function initPlayer() {
     waitForElement(".html5-video-player").then(e => {
         waitForElement("video").then(p => {
             console.log("Player found");
-            player = new Player(e as HTMLElement, p as HTMLVideoElement);
+            player = new Player(e, p as HTMLVideoElement);
         });
         // .catch(error => console.log("Failed select video element", error));
     });
@@ -101,75 +101,73 @@ function disablePlayer() {
     player.clearAll();
 }
 
-type ElementWithOriginalDisplay = HTMLElement & { originalDisplay?: string };
-
-function hideElement(elem: ElementWithOriginalDisplay) {
+function hideElement(elem: HTMLElement) {
     elem.style.display = "none";
 }
 
-function showElement(elem: ElementWithOriginalDisplay) {
+function showElement(elem: HTMLElement) {
     elem.style.display = "";
 }
 
 function hideAutoplayButton() {
     waitForElement(".ytp-autonav-toggle-button-container").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
     });
     // .then(error => console.log("Failed to remove autoplay button", error));
 }
 
 function showAutoplayButton() {
     waitForElement(".ytp-autonav-toggle-button-container").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
     });
     // .catch(error => console.log("Failed to remove autoplay button", error));
 }
 
 function hideNextVideoButton() {
     waitForElement(".ytp-next-button.ytp-button").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
     });
     // .catch(error => console.log("Failed to remove next button", error));
 }
 
 function showNextVideoButton() {
     waitForElement(".ytp-next-button.ytp-button").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
     });
     // .catch(error => console.log("Failed to remove next button", error));
 }
 
 function hideClipButton() {
     waitForElement("#flexible-item-buttons").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
     });
     // .catch(error => console.log("Failed to remove clip button", error));
 }
 
 function showClipButton() {
     waitForElement("#flexible-item-buttons").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
     });
     // .catch(error => console.log("Failed to remove clip button", error));
 }
 
 function hideBottomPanel() {
     waitForElement("yt-button-shape#button-shape").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
     });
     // .catch(error => console.log("Failed to shape button", error));
 }
 
 function showBottomPanel() {
     waitForElement("yt-button-shape#button-shape").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
     });
     // .catch(error => console.log("Failed to shape button", error));
 }
 
 function showMainPanel() {
     waitForElement("#secondary-inner").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
         const container = document.createElement("div");
         container.id = "st-main-panel";
         container.className = "sharetube";
@@ -186,7 +184,7 @@ function showMainPanel() {
 
 function hideMainPanel() {
     waitForElement("#secondary-inner").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
         elem.parentElement?.firstChild?.remove();
     });
     // .catch(error => console.log("Failed to render main panel", error));
@@ -195,10 +193,11 @@ function hideMainPanel() {
 function initSearch() {
     waitForElement("#center").then(elem => {
         Array.from(elem.children).forEach(child => {
-            hideElement(child as ElementWithOriginalDisplay);
+            hideElement(child as HTMLElement);
         });
         const container = document.createElement("div");
         container.id = "st-search-input";
+        container.className = "sharetube";
         container.style.width = "100%";
         elem.prepend(container);
 
@@ -215,19 +214,19 @@ function disableSearch() {
     waitForElement("#center").then(elem => {
         elem.firstChild!.remove();
         Array.from(elem.children).forEach(child => {
-            showElement(child as ElementWithOriginalDisplay);
+            showElement(child as HTMLElement);
         });
     });
 }
 
 function showVoiceSearchButton() {
     waitForElement("#voice-search-button").then(elem => {
-        showElement(elem as ElementWithOriginalDisplay);
+        showElement(elem);
     });
 }
 
 function hideVoiceSearchButton() {
     waitForElement("#voice-search-button").then(elem => {
-        hideElement(elem as ElementWithOriginalDisplay);
+        hideElement(elem);
     });
 }

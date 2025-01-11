@@ -9,7 +9,7 @@ bgMessagingClient.addHandler(EMT.GET_PROFILE, Handler.getProfile);
 
 bgMessagingClient.addHandler(EMT.UPDATE_PROFILE, Handler.updateProfile);
 
-// Player && room
+// Player & room
 bgMessagingClient.addHandler(EMT.ADD_VIDEO, Handler.addVideo);
 
 bgMessagingClient.addHandler(EMT.REMOVE_VIDEO, Handler.removeVideo);
@@ -49,3 +49,5 @@ bgMessagingClient.addHandler(EMT.SWITCH_TO_PRIMARY_TAB, Handler.switchToPrimaryT
 bgMessagingClient.addHandler(EMT.IS_PRIMARY_TAB, Handler.isPrimaryTab);
 
 bgMessagingClient.addHandler(EMT.IS_PRIMARY_TAB_EXISTS, Handler.isPrimaryTabExists);
+
+bgMessagingClient.addHandler(EMT.REORDER_PLAYLIST, Handler.reorderPlaylist);

@@ -14,8 +14,8 @@ export enum ExtensionMessageType {
     SWITCH_TO_PRIMARY_TAB = "SWITCH_TO_PRIMARY_TAB",
     IS_PRIMARY_TAB_EXISTS = "IS_PRIMARY_TAB_EXISTS",
     IS_PRIMARY_TAB = "IS_PRIMARY_TAB",
-    // Room
     GET_IS_ADMIN = "GET_ADMIN_STATUS",
+    REORDER_PLAYLIST = "REORDER_PLAYLIST",
     ADMIN_STATUS_UPDATED = "ADMIN_STATUS_UPDATED",
     KICKED = "KICKED",
     GET_PLAYLIST = "GET_PLAYLIST",
@@ -28,7 +28,6 @@ export enum ExtensionMessageType {
     GET_ROOM_ID = "GET_ROOM_ID",
     PROMOTE_MEMBER = "PROMOTE_MEMBER",
     REMOVE_MEMBER = "REMOVE_MEMBER",
-    // Player
     UPDATE_PLAYER_STATE = "UPDATE_PLAYER_STATE",
     PLAYER_STATE_UPDATED = "PLAYER_STATE_UPDATED",
     PLAYER_VIDEO_UPDATED = "PLAYER_VIDEO_UPDATED",
@@ -53,6 +52,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.IS_PRIMARY_TAB]: void;
     [ExtensionMessageType.CREATE_ROOM]: { videoUrl: string };
     [ExtensionMessageType.GO_TO_VIDEO]: string;
+    [ExtensionMessageType.REORDER_PLAYLIST]: string[];
     // Room
     [ExtensionMessageType.GET_IS_ADMIN]: void;
     [ExtensionMessageType.ADMIN_STATUS_UPDATED]: boolean;

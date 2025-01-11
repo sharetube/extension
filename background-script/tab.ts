@@ -28,7 +28,6 @@ const handleTab = async (tabId: number, url: string) => {
 
     const roomId = inviteLinkMatch[2];
     const roomIdMatch = roomId.match(roomIdRegex);
-    console.log("roomIdMatch", roomIdMatch);
     if (!roomIdMatch) {
         showErrorPage();
         return;
@@ -106,7 +105,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (primaryTabId !== tabId) {
         return;
     }
-    console.log("tab updated", tabId, primaryTabId, changeInfo.url);
 
     if (!tab.url?.match(domainRegex)) {
         clearPrimaryTab();

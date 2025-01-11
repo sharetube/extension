@@ -14,6 +14,9 @@
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
   },
+  "action": {
+    "default_popup": "./pages/popup/popup.html"
+  },
   "background": {
     "service_worker": "background-script/index.ts"
   },

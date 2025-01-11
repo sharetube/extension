@@ -32,7 +32,7 @@ const Search: React.FC = () => {
 
     return (
         <div
-            className={`sharetube st-search-container relative m-[0_auto] border-box w-[100%] max-w-[536px] ${isAdmin ? "" : "opacity-50 hover:cursor-not-allowed"}`}
+            className={`st-search relative m-[0_auto] border-box w-[100%] max-w-[536px] ${isAdmin ? "" : "opacity-50 hover:cursor-not-allowed"}`}
         >
             <div className="box-border flex rounded-full border border-solid border-spec-outline">
                 <div className="box-border h-[40px] w-[100%] flex-grow">

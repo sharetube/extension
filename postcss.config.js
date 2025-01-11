@@ -9,11 +9,7 @@ export default {
     postcssPrefixSelector({
       prefix: ".sharetube",
       transform(_, selector, prefixedSelector) {
-        if (
-          selector.startsWith(":root") ||
-          selector.startsWith("html") ||
-          selector.startsWith("body")
-        ) {
+        if (selector.startsWith(":root")) {
           return selector;
         }
         return prefixedSelector;

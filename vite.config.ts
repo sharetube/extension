@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import fs from "fs";
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import { createHtmlPlugin } from "vite-plugin-html";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 function fixManifestOut(buildDir: string, browser: string) {
@@ -61,6 +62,9 @@ export default defineConfig(({}) => {
 
     return {
         plugins: [
+            createHtmlPlugin({
+                minify: true,
+            }),
             react(),
             crx({ manifest }),
             tsconfigPaths(),

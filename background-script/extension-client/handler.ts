@@ -149,3 +149,9 @@ export async function isPrimaryTab(
 export function isPrimaryTabExists(): EMRM[EMType.IS_PRIMARY_TAB_EXISTS] {
     return getPrimaryTabIdOrUnset().then(primaryTabId => primaryTabId !== null);
 }
+
+export function reorderPlaylist(payload: EMPM[EMType.REORDER_PLAYLIST]): void {
+    server.send(TSMType.REORDER_PLAYLIST, {
+        video_ids: payload,
+    });
+}
