@@ -22,6 +22,11 @@ const throttledCopyLink = callOncePerInterval(() => {
             "yt-copy-link-renderer yt-button-renderer .yt-spec-touch-feedback-shape",
         ) as HTMLElement
     ).click();
+    (
+        document.querySelector(
+            "yt-copy-link-renderer yt-button-renderer .yt-spec-touch-feedback-shape",
+        ) as HTMLElement
+    ).click();
 }, 3500);
 
 const copyLink = () => {

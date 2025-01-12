@@ -4,9 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+<<<<<<< HEAD
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
+||||||| 8725164
+    "lint": "eslint --cache .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky",
+=======
+>>>>>>> d494ed7f3181e6caf37fc84fa2d209eb5ed9cc3c
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx}\"",
     "build": "tsc && vite build",
@@ -21,7 +28,6 @@
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
-    "vite-plugin-web-extension": "^4.4.3",
     "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
@@ -32,16 +38,9 @@
     "@types/react": "^19.0.4",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.0.0",
-    "@types/webextension-polyfill": "^0.12.1",
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
+    "@types/webextension-polyfill": "^0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.37.3",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
     "postcss": "^8.4.49",
     "postcss-import": "^16.1.0",
@@ -53,6 +52,7 @@
     "typescript-eslint": "^8.19.1",
     "vite": "^6.0.7",
     "vite-plugin-html": "^3.2.2",
+    "vite-plugin-web-extension": "^4.4.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "packageManager": "yarn@4.5.1"
