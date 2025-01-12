@@ -1,6 +1,6 @@
 import { dateNowInUs } from "../../shared/dateNowInUs";
-import { log } from "../../shared/log";
 import { ContentScriptMessagingClient } from "@shared/client/client";
+import DevMode from "background-script/devMode";
 import {
     ExtensionMessagePayloadMap,
     ExtensionMessageResponseMap,
@@ -81,7 +81,7 @@ class Player {
         this.contentScriptMessagingClient.addHandler(
             ExtensionMessageType.ADMIN_STATUS_UPDATED,
             (payload: ExtensionMessagePayloadMap[ExtensionMessageType.ADMIN_STATUS_UPDATED]) => {
-                log("admin status updated", payload);
+                DevMode.log("admin status updated", { isAdmin: payload });
                 this.isAdmin = payload;
             },
         );
@@ -143,7 +143,7 @@ class Player {
     }
 
     public clearAll() {
-        log("clearAll");
+        DevMode.log("clearAll");
         this.clearUpdateIsReadyFalseTimeout();
         this.clearEventListeners();
         this.clearContentScriptHandlers();
@@ -151,9 +151,10 @@ class Player {
     }
 
     private setActualState() {
+        DevMode.log("setActualState");
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.GET_PLAYER_STATE).then(
             (state: PlayerStateType) => {
-                log("fetched player state", state);
+                DevMode.log("fetched player state", state);
                 this.setState(state);
             },
         );
@@ -179,7 +180,7 @@ class Player {
         this.clearUpdateIsReadyFalseTimeout();
         this.udpateIsReadyFalseTimeout = setTimeout(() => {
             if (!this.isReady) return;
-            log("update is ready false timeout");
+            DevMode.log("update is ready false timeout");
             this.isReady = false;
             ContentScriptMessagingClient.sendMessage(ExtensionMessageType.UPDATE_READY, false);
             this.clearUpdateIsReadyFalseTimeout();
@@ -200,7 +201,7 @@ class Player {
     private handleKeyDown(event: KeyboardEvent) {
         switch (event.key) {
             case "ArrowRight":
-                log("ArrowRight: video diration, current time");
+                DevMode.log("ArrowRight: video diration, current time");
                 this.ignorePlayCount--;
                 if (this.isAdmin && this.player.duration - this.player.currentTime < 5) {
                     this.sendSkip();
@@ -208,7 +209,7 @@ class Player {
 
                 break;
             case "ArrowLeft":
-                log("ArrowLeft");
+                DevMode.log("ArrowLeft");
                 this.ignorePlayCount--;
 
                 break;
@@ -216,40 +217,43 @@ class Player {
     }
 
     private handleWaiting() {
-        log("waiting");
+        DevMode.log("waiting");
         if (this.isDataLoaded) {
             this.setUpdateIsReadyFalseTimeout();
         }
     }
 
     private handleEnded() {
-        log("ended");
+        DevMode.log("ended");
         if (this.isAdmin) {
             this.sendSkip();
         }
     }
 
     private handleEmptied() {
-        log("emptied");
+        DevMode.log("emptied");
         if (this.adShowing) {
-            log("ignored emptied because ad is showing");
+            DevMode.log("ignored emptied because ad is showing");
             return;
         }
 
+        this.adShowing = false;
         this.ignoreSeekingCount = 0;
         this.ignorePlayCount = 0;
         this.ignorePauseCount = 0;
+        this.isReady = false;
+        this.isDataLoaded = false;
     }
 
     private handlePause() {
-        log("pause");
+        DevMode.log("pause");
         if (this.adShowing) {
-            log("ignored pause because ad is showing");
+            DevMode.log("ignored pause because ad is showing");
             return;
         }
 
         if (this.ignorePauseCount > 0) {
-            log("pause ignored");
+            DevMode.log("pause ignored");
             this.ignorePauseCount--;
             return;
         }
@@ -258,24 +262,24 @@ class Player {
     }
 
     private handleCanplay() {
-        log("canplay");
+        DevMode.log("canplay");
         if (this.adShowing) {
-            log("ignored canplay because ad is showing");
+            DevMode.log("ignored canplay because ad is showing");
             return;
         }
 
         if (!this.clearUpdateIsReadyFalseTimeout()) {
             if (this.isReady) return;
             this.isReady = true;
-            this.setActualState();
             ContentScriptMessagingClient.sendMessage(ExtensionMessageType.UPDATE_READY, true);
+            this.setActualState();
         }
     }
 
     private handleLoadedData() {
-        log("loaded data");
+        DevMode.log("loaded data");
         if (this.adShowing) {
-            log("ignored loaded data because ad is showing");
+            DevMode.log("ignored loaded data because ad is showing");
             return;
         }
 
@@ -283,9 +287,9 @@ class Player {
     }
 
     private handlePlay() {
-        log("play");
+        DevMode.log("play");
         if (this.adShowing) {
-            log("ignored play because ad is showing");
+            DevMode.log("ignored play because ad is showing");
             return;
         }
         if (!this.isPlayAfterEndedHandled) {
@@ -295,12 +299,12 @@ class Player {
         }
 
         if (!this.isDataLoaded) {
-            log("play ignored because data not loaded");
+            DevMode.log("play ignored because data not loaded");
             return;
         }
 
         if (this.ignorePlayCount > 0) {
-            log("play ignored");
+            DevMode.log("play ignored");
             this.ignorePlayCount--;
             return;
         }
@@ -309,29 +313,29 @@ class Player {
     }
 
     private handleSeeking() {
-        log("seeking");
+        DevMode.log("seeking");
         if (this.adShowing) {
-            log("ignored seeking because ad is showing");
+            DevMode.log("ignored seeking because ad is showing");
             return;
         }
 
         if (this.ignoreSeekingCount > 0) {
-            log("seeking ignored");
+            DevMode.log("seeking ignored");
             this.ignoreSeekingCount--;
             return;
         }
 
         if (this.isDataLoaded && this.getIsPlaying()) {
-            log("ignore play count ++", this.ignorePlayCount);
+            DevMode.log("ignore play count ++", { playCountBefore: this.ignorePlayCount });
             this.ignorePlayCount++;
         }
         this.handleStateChanged();
     }
 
     private handleRatechange() {
-        log("ratechange");
+        DevMode.log("ratechange");
         if (this.adShowing) {
-            log("ignored ratechange because ad is showing");
+            DevMode.log("ignored ratechange because ad is showing");
             return;
         }
 
@@ -344,7 +348,7 @@ class Player {
     }
 
     private handleMute() {
-        log("mute");
+        DevMode.log("mute");
         if (this.player.muted === this.muted) {
             return;
         } else {
@@ -378,13 +382,20 @@ class Player {
         } else if (!state.is_playing && this.getIsPlaying()) {
             this.ignorePauseCount++;
         }
-        this.player[state.is_playing ? "play" : "pause"]();
+        if (state.is_playing) {
+            (this.player.play() as Promise<void>).catch(() => {
+                DevMode.log("error calling play, clicking player...");
+                this.player.click();
+            });
+        } else {
+            this.player.pause();
+        }
         this.player.currentTime = ct;
         this.ignoreSeekingCount++;
 
         this.player.playbackRate = state.playback_rate;
 
-        log("setted player state", {
+        DevMode.log("setted player state", {
             current_time: ct,
             playback_rate: state.playback_rate,
             is_playing: state.is_playing,
@@ -404,7 +415,7 @@ class Player {
             is_ended: false,
             is_playing: this.getIsPlaying(),
         };
-        log("get state returned: ", s);
+        DevMode.log("get state returned: ", s);
         return s;
     }
 
@@ -422,9 +433,6 @@ class Player {
 
     private updateVideo(videoUrl: string) {
         window.postMessage({ type: "SKIP", payload: videoUrl }, "*");
-        this.isReady = false;
-        this.adShowing = false;
-        this.isDataLoaded = false;
     }
 
     private observeElement(): void {
@@ -454,7 +462,7 @@ class Player {
         const adShowing = cl.contains("ad-showing");
         if (this.adShowing === adShowing) return;
 
-        log("ad showing", this.adShowing, adShowing);
+        DevMode.log("ad showing", { was: this.adShowing, now: adShowing });
         this.adShowing = adShowing;
         if (this.adShowing) {
             this.isReady = false;

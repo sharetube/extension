@@ -1,11 +1,12 @@
 import Player from "@player/player";
 import { AdminProvider } from "@shared/Context/Admin/Admin";
 import { ContentScriptMessagingClient } from "@shared/client/client";
+import DevMode from "@shared/client/devMode";
 import waitForElement from "@shared/lib/waitForElement";
 import Panel from "@widgets/Panel/Panel";
 import Search from "@widgets/Search/Search";
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import { ExtensionMessageType } from "types/extensionMessage";
 
 const contentScriptMessageClient = new ContentScriptMessagingClient();
@@ -88,7 +89,7 @@ let player: Player | null = null;
 function initPlayer() {
     waitForElement(".html5-video-player").then(e => {
         waitForElement("video").then(p => {
-            console.log("Player found");
+            DevMode.log("PLAYER FOUND", { ...p });
             player = new Player(e, p as HTMLVideoElement);
         });
         // .catch(error => console.log("Failed select video element", error));
@@ -173,10 +174,11 @@ function showMainPanel() {
         container.className = "sharetube";
         elem.parentElement?.prepend(container);
 
-        ReactDOM.createRoot(container).render(
+        ReactDOM.render(
             <AdminProvider>
                 <Panel />
             </AdminProvider>,
+            container,
         );
     });
     // .catch(error => console.log("Failed to render main panel", error));
@@ -201,10 +203,11 @@ function initSearch() {
         container.style.width = "100%";
         elem.prepend(container);
 
-        ReactDOM.createRoot(container).render(
+        ReactDOM.render(
             <AdminProvider>
                 <Search />
             </AdminProvider>,
+            container,
         );
     });
     // .catch(error => console.log("Failed to render input", error));

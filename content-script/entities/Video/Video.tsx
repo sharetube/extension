@@ -10,7 +10,7 @@ import { ExtensionMessageType } from "types/extensionMessage";
 
 interface VideoProps {
     videoUrl: string;
-    videoId: string;
+    videoId: number;
     isAdmin: boolean;
     number?: number;
     type: "number" | "last" | "current";

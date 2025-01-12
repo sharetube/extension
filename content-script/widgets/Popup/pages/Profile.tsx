@@ -96,7 +96,6 @@ const Profile: React.FC<ProfileProps> = ({ user, changePage }) => {
     };
 
     const setProfile = () => {
-        console.log("setProfile");
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.UPDATE_PROFILE, {
             username: username,
             avatar_url: avatarUrl,

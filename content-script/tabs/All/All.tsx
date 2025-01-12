@@ -1,9 +1,24 @@
 import { AdminProvider } from "@shared/Context/Admin/Admin";
+import { ContentScriptMessagingClient } from "@shared/client/client";
+import DevMode from "@shared/client/devMode";
 import waitForElement from "@shared/lib/waitForElement";
 import ContextItem from "@widgets/ContextItem/ContextItem";
 import Popup from "@widgets/Popup/Popup";
 import React from "react";
 import ReactDOM from "react-dom";
+import { ExtensionMessageType } from "types/extensionMessage";
+
+// Devmode
+const handleDevModeUpdate = (value: boolean) => {
+    DevMode.setEnabled(value);
+};
+
+ContentScriptMessagingClient.sendMessage(ExtensionMessageType.GET_DEVMODE).then(
+    handleDevModeUpdate,
+);
+
+const MessageClient = new ContentScriptMessagingClient();
+MessageClient.addHandler(ExtensionMessageType.DEVMODE_UPDATED, handleDevModeUpdate);
 
 // Render popup
 waitForElement("#end")

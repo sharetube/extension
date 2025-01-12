@@ -41,7 +41,6 @@ const Popup: React.FC = () => {
     useEffect(() => {
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.GET_PROFILE).then(
             (payload: ProfileType) => {
-                console.log("get profile", payload);
                 setUser(payload);
             },
         );

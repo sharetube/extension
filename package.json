@@ -4,14 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx}\"",
-    "build": "vite build",
-    "build:chrome": "BROWSER=chrome vite build",
-    "build:firefox": "BROWSER=firefox vite build"
+    "build": "tsc && vite build",
+    "build:chrome": "tsc && BROWSER=chrome vite build",
+    "build:firefox": "tsc && BROWSER=firefox vite build"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": "prettier --write"
@@ -20,26 +17,20 @@
     "lodash.debounce": "^4.0.8",
     "react": "^18.3.1",
     "react-beautiful-dnd": "^13.1.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "webextension-polyfill": "^0.12.0"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "^2.0.0-beta.26",
     "@trivago/prettier-plugin-sort-imports": "^5.2.1",
     "@types/chrome": "^0.0.293",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.4",
     "@types/react-beautiful-dnd": "^13.1.8",
-    "@types/react-dom": "^19.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
+    "@types/react-dom": "^18.0.0",
+    "@types/webextension-polyfill": "^0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
-    "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.37.3",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
     "postcss": "^8.4.49",
     "postcss-import": "^16.1.0",
@@ -51,6 +42,7 @@
     "typescript-eslint": "^8.19.1",
     "vite": "^6.0.7",
     "vite-plugin-html": "^3.2.2",
+    "vite-plugin-web-extension": "^4.4.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "packageManager": "yarn@4.5.1"

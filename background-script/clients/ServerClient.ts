@@ -1,3 +1,4 @@
+import DevMode from "background-script/devMode";
 import { globalState } from "background-script/state";
 import config from "config";
 import debounce from "lodash.debounce";
@@ -55,17 +56,17 @@ class ServerClient {
     private addListeners() {
         if (!this.ws) return;
         this.ws.onerror = event => {
-            console.log("WS ERROR", event);
+            DevMode.log("WS: ERROR", event);
             this.close();
         };
 
         this.ws.onclose = (event: CloseEvent) => {
-            console.log("WS CLOSED", event.code, event.reason);
+            DevMode.log("WS: CLOSED", { ...event });
             const handler = this.closeCodeHandlers.get(event.code);
             if (handler) {
                 handler();
             } else {
-                console.log("WS: Unknown close code:", event.code);
+                DevMode.log("WS: UNKNOWN CLOSE CODE", { code: event.code });
             }
 
             this.close();
@@ -75,15 +76,15 @@ class ServerClient {
             this.debouncedKeepAlive();
             try {
                 const { type, payload } = JSON.parse(data);
-                console.log(`FROM WS: type: ${type}, payload:`, payload);
+                DevMode.log("WS: FROM", { type, payload });
                 const handler = this.handlers.get(type);
                 if (handler) {
                     handler(payload);
                 } else {
-                    console.log("WS: Unknown message type:", type);
+                    DevMode.log("WS: UNKNOWN MESSAGE TYPE", { type });
                 }
             } catch (error) {
-                console.error("WS ERROR: Parsing message:", error);
+                DevMode.log(`WS ERROR: Parsing message: ${error}`);
             }
         };
     }
@@ -107,14 +108,14 @@ class ServerClient {
 
     public createRoom(profile: ProfileType, videoUrl: string): Promise<void> {
         const params = this.buildParams(profile, { "video-url": videoUrl });
-        console.log("ws creating room with params:", params);
+        DevMode.log("WS: CREATING ROOM", { ...params });
         // todo: implement WSConnectionURLBuilder
         return this.init(`wss://${baseUrl}/api/v1/ws/room/create?${buildQueryParams(params)}`);
     }
 
     public joinRoom(profile: ProfileType, room_id: string): Promise<void> {
         const params = this.buildParams(profile, globalState.jwt ? { jwt: globalState.jwt } : {});
-        console.log("ws joining room with params:", params);
+        DevMode.log("WS: JOINING ROOM", { ...params });
         return this.init(
             `wss://${baseUrl}/api/v1/ws/room/${room_id}/join?${buildQueryParams(params)}`,
         );
@@ -125,7 +126,7 @@ class ServerClient {
         const message = JSON.stringify({ type, payload: payload || null });
         this.debouncedKeepAlive();
         this.ws.send(message);
-        console.log("TO WS:", { type, payload });
+        DevMode.log("WS: TO", { type, payload });
     }
 
     public close() {
@@ -135,7 +136,7 @@ class ServerClient {
         this.ws.close();
         this.removeListeners();
         this.ws = undefined;
-        console.log("WS CLOSED");
+        DevMode.log("WS: CLOSED", {});
     }
 
     public addHandler<T extends FromServerMessageType>(type: T, handler: MessageHandler<T>): void {
@@ -146,7 +147,7 @@ class ServerClient {
         this.closeCodeHandlers.set(closeCode, handler);
     }
 
-    // https://developer.chrome.com/docs/extensions/how-to/web-platform/websockets
+    // https://developer.browser.com/docs/extensions/how-to/web-platform/websockets
     private debouncedKeepAlive = debounce(() => this.send(ToServerMessageType.ALIVE), 25 * 1000);
 }
 

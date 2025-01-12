@@ -1,0 +1,42 @@
+:root {
+    --button-text: var(--page-text);
+
+    --page-bg: #fff;
+    --page-text: #000;
+    --button-bg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --page-bg: #282828;
+        --page-text: #fff;
+        --button-bg: #ffffff1a;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    color: var(--page-text);
+    background-color: var(--page-bg);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+}
+
+input {
+    background: none;
+    border: 1px solid var(--page-text);
+    padding: 0;
+    margin: 0 14px 0 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}

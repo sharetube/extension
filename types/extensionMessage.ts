@@ -39,6 +39,10 @@ export enum ExtensionMessageType {
     LAST_VIDEO_UPDATED = "LAST_VIDEO_UPDATED",
     UPDATE_MUTED = "UPDATE_MUTED",
     UPDATE_READY = "UPDATE_READY",
+    // Devmode
+    GET_DEVMODE = "GET_DEVMODE",
+    SET_DEVMODE = "SET_DEVMODE",
+    DEVMODE_UPDATED = "DEVMODE_UPDATED",
 }
 
 export type ExtensionMessagePayloadMap = {
@@ -52,7 +56,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.IS_PRIMARY_TAB]: void;
     [ExtensionMessageType.CREATE_ROOM]: { videoUrl: string };
     [ExtensionMessageType.GO_TO_VIDEO]: string;
-    [ExtensionMessageType.REORDER_PLAYLIST]: string[];
+    [ExtensionMessageType.REORDER_PLAYLIST]: number[];
     // Room
     [ExtensionMessageType.GET_IS_ADMIN]: void;
     [ExtensionMessageType.ADMIN_STATUS_UPDATED]: boolean;
@@ -61,7 +65,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.GET_MEMBERS]: void;
     [ExtensionMessageType.MEMBERS_UPDATED]: MemberType[];
     [ExtensionMessageType.ADD_VIDEO]: string;
-    [ExtensionMessageType.REMOVE_VIDEO]: string;
+    [ExtensionMessageType.REMOVE_VIDEO]: number;
     [ExtensionMessageType.GET_ROOM_ID]: void;
     [ExtensionMessageType.PROMOTE_MEMBER]: string;
     [ExtensionMessageType.REMOVE_MEMBER]: string;
@@ -69,7 +73,7 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.UPDATE_PLAYER_STATE]: PlayerType;
     [ExtensionMessageType.PLAYER_STATE_UPDATED]: PlayerType;
     [ExtensionMessageType.UPDATE_PLAYER_VIDEO]: {
-        videoId: string;
+        videoId: number;
         updatedAt: number;
     };
     [ExtensionMessageType.SKIP_CURRENT_VIDEO]: number;
@@ -83,7 +87,12 @@ export type ExtensionMessagePayloadMap = {
     [ExtensionMessageType.GET_LAST_VIDEO]: void;
     [ExtensionMessageType.GET_PLAYLIST]: void;
     [ExtensionMessageType.KICKED]: void;
+    // Devmode
+    [ExtensionMessageType.GET_DEVMODE]: void;
+    [ExtensionMessageType.SET_DEVMODE]: boolean;
+    [ExtensionMessageType.DEVMODE_UPDATED]: boolean;
 };
+
 export type ExtensionMessageResponseMap = {
     [ExtensionMessageType.GET_PLAYLIST]: PlaylistType;
     [ExtensionMessageType.GET_PROFILE]: Promise<ProfileType>;
@@ -98,6 +107,9 @@ export type ExtensionMessageResponseMap = {
     [ExtensionMessageType.GET_PLAYER_VIDEO_URL]: string;
     [ExtensionMessageType.GET_LAST_VIDEO]: VideoType | null;
     [ExtensionMessageType.SKIP_CURRENT_VIDEO]: boolean;
+    // Devmode
+    [ExtensionMessageType.GET_DEVMODE]: boolean;
+    [ExtensionMessageType.DEVMODE_UPDATED]: boolean;
 };
 
 export interface ExtensionMessage<T extends ExtensionMessageType> {

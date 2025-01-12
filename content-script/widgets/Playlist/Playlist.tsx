@@ -93,12 +93,8 @@ const Playlist: React.FC = () => {
                 />
             )}
             {currentVideoUrl && (
-                <Video
-                    videoId={currentVideoUrl}
-                    videoUrl={currentVideoUrl}
-                    type="current"
-                    isAdmin={isAdmin}
-                />
+                // fixme:
+                <Video videoId={0} videoUrl={currentVideoUrl} type="current" isAdmin={isAdmin} />
             )}
             <DragDropContext onDragEnd={handleOnDragEnd}>
                 <Droppable droppableId="playlist">
@@ -107,7 +103,11 @@ const Playlist: React.FC = () => {
                             {videos &&
                                 videos.length > 0 &&
                                 videos.map((video, index) => (
-                                    <Draggable key={video.id} draggableId={video.id} index={index}>
+                                    <Draggable
+                                        key={video.id}
+                                        draggableId={video.id.toString()}
+                                        index={index}
+                                    >
                                         {provided => (
                                             <li
                                                 {...provided.draggableProps}

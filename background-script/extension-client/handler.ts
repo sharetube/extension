@@ -1,6 +1,7 @@
 import { setTargetPrimaryTabId } from "../targetPrimaryTabId";
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
 import ServerClient from "background-script/clients/ServerClient";
+import DevMode from "background-script/devMode";
 import { ProfileStorage } from "background-script/profileStorage";
 import { globalState } from "background-script/state";
 import { getPrimaryTabIdOrUnset } from "background-script/tab";
@@ -12,6 +13,7 @@ import {
     ExtensionMessageType,
 } from "types/extensionMessage";
 import { ToServerMessageType as TSMType } from "types/serverMessage";
+import browser from "webextension-polyfill";
 
 const server = ServerClient.getInstance();
 
@@ -23,7 +25,7 @@ export function addVideo(videoUrl: EMPM[EMType.ADD_VIDEO]): void {
     server.send(TSMType.ADD_VIDEO, { video_url: videoUrl });
 }
 
-export function removeVideo(videoId: EMPM[EMType.ADD_VIDEO]): void {
+export function removeVideo(videoId: EMPM[EMType.REMOVE_VIDEO]): void {
     server.send(TSMType.REMOVE_VIDEO, { video_id: videoId });
 }
 
@@ -124,13 +126,13 @@ export async function createRoom(
     if (sender?.tab?.id !== undefined) setTargetPrimaryTabId(sender.tab.id);
     const profile = await profileStorage.get();
     server.createRoom(profile, payload.videoUrl).then(() => {
-        console.log("room created");
+        DevMode.log("ROOM CREATED", { videoUrl: payload.videoUrl });
     });
 }
 
 export function switchToPrimaryTab() {
     tabStorage.getPrimaryTab().then(primaryTabId => {
-        if (primaryTabId) chrome.tabs.update(primaryTabId, { active: true });
+        if (primaryTabId) browser.tabs.update(primaryTabId, { active: true });
     });
 }
 
@@ -154,4 +156,12 @@ export function reorderPlaylist(payload: EMPM[EMType.REORDER_PLAYLIST]): void {
     server.send(TSMType.REORDER_PLAYLIST, {
         video_ids: payload,
     });
+}
+
+export function setDevMode(payload: EMPM[EMType.SET_DEVMODE]): void {
+    DevMode.setEnabled(payload);
+}
+
+export function getDevMode(): EMRM[EMType.GET_DEVMODE] {
+    return DevMode.isEnabled();
 }

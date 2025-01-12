@@ -1,5 +1,6 @@
 import { defaultProfile } from "constants/defaultProfile";
 import { ProfileType } from "types/profile.type";
+import browser from "webextension-polyfill";
 
 export class ProfileStorage {
     private static _instance: ProfileStorage;
@@ -14,19 +15,19 @@ export class ProfileStorage {
         return ProfileStorage._instance;
     }
 
-    public set(profile: ProfileType): Promise<void> {
-        return chrome.storage.sync.set({ [this.STORAGE_KEY]: profile });
+    public async set(profile: ProfileType): Promise<void> {
+        return browser.storage.sync.set({ [this.STORAGE_KEY]: profile });
     }
 
     public async get(): Promise<ProfileType> {
-        return chrome.storage.sync.get(this.STORAGE_KEY).then(result => {
-            const profile = result[this.STORAGE_KEY];
-            if (!profile) {
-                this.set(defaultProfile);
-                return defaultProfile;
-            }
+        const result = await browser.storage.sync.get(this.STORAGE_KEY);
+        const profile = result[this.STORAGE_KEY] as ProfileType | undefined;
 
-            return profile;
-        });
+        if (!profile) {
+            await this.set(defaultProfile);
+            return defaultProfile;
+        }
+
+        return profile;
     }
 }

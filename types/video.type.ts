@@ -1,4 +1,4 @@
-export type videoIdType = string;
+export type videoIdType = number;
 
 export type VideoType = {
     id: videoIdType;
@@ -8,4 +8,5 @@ export type VideoType = {
 export type PlaylistType = {
     videos: VideoType[];
     last_video: VideoType | null;
+    version: number;
 };

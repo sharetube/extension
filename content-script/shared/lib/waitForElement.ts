@@ -1,3 +1,5 @@
+import DevMode from "background-script/devMode";
+
 const waitForElement = (selector: string, timeout = 2000, retries = 3): Promise<HTMLElement> =>
     new Promise((resolve, reject) => {
         const attempt = (retryCount: number) => {
@@ -21,7 +23,7 @@ const waitForElement = (selector: string, timeout = 2000, retries = 3): Promise<
             const timeoutId = setTimeout(() => {
                 observer.disconnect();
                 if (retryCount > 0) {
-                    console.log("ST: ", "Retrying... ", retryCount, selector);
+                    DevMode.log("Retrying find elem", { retryCount, selector });
                     attempt(retryCount - 1);
                 } else {
                     reject(`Failed to find element with selector: ${selector}`);

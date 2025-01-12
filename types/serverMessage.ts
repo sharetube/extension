@@ -49,10 +49,10 @@ export type ToServerMessagePayloadMap = {
         video_url: string;
     };
     [TO.REMOVE_VIDEO]: {
-        video_id: string;
+        video_id: number;
     };
     [TO.REORDER_PLAYLIST]: {
-        video_ids: string[];
+        video_ids: number[];
     };
     [TO.UPDATE_READY]: {
         is_ready: boolean;
@@ -67,7 +67,7 @@ export type ToServerMessagePayloadMap = {
         updated_at: number;
     };
     [TO.UPDATE_PLAYER_VIDEO]: {
-        video_id: string;
+        video_id: number;
         updated_at: number;
     };
     [TO.ALIVE]: void;
@@ -89,7 +89,7 @@ export type FromServerMessagePayloadMap = {
         playlist: PlaylistType;
     };
     [FROM.VIDEO_REMOVED]: {
-        removed_video_id: string;
+        removed_video_id: number;
         playlist: PlaylistType;
     };
     [FROM.PLAYLIST_REORDERED]: {

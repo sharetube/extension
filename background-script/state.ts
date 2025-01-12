@@ -14,6 +14,7 @@ export const defaultState: State = {
         playlist: {
             videos: [],
             last_video: null,
+            version: 0,
         },
         player: {
             video_url: "",
