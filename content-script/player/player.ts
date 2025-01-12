@@ -1,6 +1,6 @@
 import { dateNowInUs } from "../../shared/dateNowInUs";
 import { ContentScriptMessagingClient } from "@shared/client/client";
-import { logger } from "@tabs/All/All";
+import { CsLogger } from "@shared/logging/logger";
 import {
     ExtensionMessagePayloadMap,
     ExtensionMessageResponseMap,
@@ -12,6 +12,8 @@ import { PlayerStateType, PlayerType } from "types/player.type";
 interface MastheadElement extends HTMLElement {
     theater: boolean;
 }
+
+const logger = CsLogger.getInstance();
 
 class Player {
     private e: HTMLElement; // todo: rename

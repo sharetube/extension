@@ -1,4 +1,4 @@
-import { logger } from "@tabs/All/All";
+import { BgLogger } from "background-script/logging/logger";
 import { globalState } from "background-script/state";
 import config from "config";
 import debounce from "lodash.debounce";
@@ -18,6 +18,8 @@ type MessageHandler<T extends FromServerMessageType> = (
 ) => void;
 
 type CloseCodeHandler = () => void;
+
+const logger = BgLogger.getInstance();
 
 const buildQueryParams = (params: Record<string, string>): string =>
     Object.entries(params)
@@ -108,14 +110,14 @@ class ServerClient {
 
     public createRoom(profile: ProfileType, videoUrl: string): Promise<void> {
         const params = this.buildParams(profile, { "video-url": videoUrl });
-        logger.log("WS: CREATING ROOM", { ...params });
+        logger.log("WS: CREATING ROOM", params);
         // todo: implement WSConnectionURLBuilder
         return this.init(`wss://${baseUrl}/api/v1/ws/room/create?${buildQueryParams(params)}`);
     }
 
     public joinRoom(profile: ProfileType, room_id: string): Promise<void> {
         const params = this.buildParams(profile, globalState.jwt ? { jwt: globalState.jwt } : {});
-        logger.log("WS: JOINING ROOM", { ...params });
+        logger.log("WS: JOINING ROOM", params);
         return this.init(
             `wss://${baseUrl}/api/v1/ws/room/${room_id}/join?${buildQueryParams(params)}`,
         );
@@ -136,7 +138,7 @@ class ServerClient {
         this.ws.close();
         this.removeListeners();
         this.ws = undefined;
-        logger.log("WS: CLOSED", {});
+        logger.log("WS: CLOSED");
     }
 
     public addHandler<T extends FromServerMessageType>(type: T, handler: MessageHandler<T>): void {

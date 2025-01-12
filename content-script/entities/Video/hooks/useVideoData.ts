@@ -13,7 +13,6 @@ const useVideoData = (videoUrl: string) => {
                 setLoading(false);
             })
             .catch(error => {
-                console.error("useVideoData", error);
                 setLoading(false);
             });
     }, [videoUrl]);

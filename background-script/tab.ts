@@ -1,6 +1,6 @@
 import { BackgroundMessagingClient } from "./clients/ExtensionClient";
 import ServerClient from "./clients/ServerClient";
-import { logger } from "./logging/logger";
+import { BgLogger } from "./logging/logger";
 import { ProfileStorage } from "./profileStorage";
 import { globalState } from "./state";
 import { TabStorage } from "./tabStorage";
@@ -10,6 +10,7 @@ import browser from "webextension-polyfill";
 
 const server = ServerClient.getInstance();
 const tabStorage = TabStorage.getInstance();
+const logger = BgLogger.getInstance();
 const bgMessagingClient = BackgroundMessagingClient.getInstance();
 const profileStorage = ProfileStorage.getInstance();
 
@@ -50,8 +51,6 @@ const handleTab = async (tabId: number, url: string) => {
         }
     } else {
         const profile = await profileStorage.get();
-
-        setTargetPrimaryTabId(tabId);
         // show loading screen
         browser.tabs.update(tabId, {
             url: browser.runtime.getURL("/pages/loading.html"),

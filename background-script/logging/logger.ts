@@ -1,12 +1,19 @@
 import { DebugModeStorage } from "./debugModeStorage";
 import Logger from "shared/logger";
 
-const logger = new Logger();
+export class BgLogger extends Logger {
+    private static instance: BgLogger;
 
-DebugModeStorage.getInstance()
-    .get()
-    .then(debugMode => {
-        logger.setEnabled(debugMode);
-    });
+    constructor() {
+        super();
+        DebugModeStorage.getInstance()
+            .get()
+            .then(debugMode => {
+                this.setEnabled(debugMode);
+            });
+    }
 
-export { logger };
+    public static getInstance(): BgLogger {
+        return (BgLogger.instance ??= new BgLogger());
+    }
+}

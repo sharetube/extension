@@ -1,5 +1,7 @@
-import { logger } from "./logging/logger";
+import { BgLogger } from "./logging/logger";
 import browser from "webextension-polyfill";
+
+const logger = BgLogger.getInstance();
 
 export class TabStorage {
     private static instance: TabStorage;

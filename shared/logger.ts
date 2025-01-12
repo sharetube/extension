@@ -14,7 +14,6 @@ class Logger {
     }
 
     public setEnabled(value: boolean): void {
-        console.log("Debug mode:", value);
         this.enabled = value;
     }
 }

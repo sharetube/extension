@@ -1,4 +1,4 @@
-import { logger } from "@tabs/All/All";
+// import { CsLogger } from "@shared/logging/logger";
 
 const waitForElement = (selector: string, timeout = 2000, retries = 3): Promise<HTMLElement> =>
     new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ const waitForElement = (selector: string, timeout = 2000, retries = 3): Promise<
             const timeoutId = setTimeout(() => {
                 observer.disconnect();
                 if (retryCount > 0) {
-                    logger.log("Retrying find elem", { retryCount, selector });
+                    // CsLogger.getInstance().log("Retrying find elem", { retryCount, selector });
                     attempt(retryCount - 1);
                 } else {
                     reject(`Failed to find element with selector: ${selector}`);

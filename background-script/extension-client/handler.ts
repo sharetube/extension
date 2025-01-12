@@ -2,7 +2,7 @@ import { setTargetPrimaryTabId } from "../targetPrimaryTabId";
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
 import ServerClient from "background-script/clients/ServerClient";
 import { DebugModeStorage } from "background-script/logging/debugModeStorage";
-import { logger } from "background-script/logging/logger";
+import { BgLogger } from "background-script/logging/logger";
 import { ProfileStorage } from "background-script/profileStorage";
 import { globalState } from "background-script/state";
 import { getPrimaryTabIdOrUnset } from "background-script/tab";
@@ -17,6 +17,7 @@ import { ToServerMessageType as TSMType } from "types/serverMessage";
 import browser from "webextension-polyfill";
 
 const server = ServerClient.getInstance();
+const logger = BgLogger.getInstance();
 
 const profileStorage = ProfileStorage.getInstance();
 const debugModeStorage = DebugModeStorage.getInstance();

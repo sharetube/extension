@@ -2,10 +2,12 @@ import getVideoUrlFromLink from "../../shared/api/validateVideo";
 import useKey from "./hooks/useKey";
 import useAdmin from "@shared/Context/Admin/hooks/useAdmin";
 import { ContentScriptMessagingClient } from "@shared/client/client";
+import { CsLogger } from "@shared/logging/logger";
 import AddIcon from "@shared/ui/AddIcon/AddIcon";
-import { logger } from "@tabs/All/All";
 import React, { useState } from "react";
 import { ExtensionMessageType } from "types/extensionMessage";
+
+const logger = CsLogger.getInstance();
 
 const Search: React.FC = () => {
     const { isAdmin } = useAdmin();

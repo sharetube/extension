@@ -68,7 +68,7 @@ const Room: React.FC<RoomProps> = ({ profile, changePage }) => {
     const [isPrimaryTab, setIsPrimaryTab] = useState(true);
     useEffect(() => {
         ContentScriptMessagingClient.sendMessage(ExtensionMessageType.IS_PRIMARY_TAB).then(
-            response => {
+            (response: boolean) => {
                 setIsPrimaryTab(response);
             },
         );

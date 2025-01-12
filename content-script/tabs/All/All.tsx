@@ -1,24 +1,9 @@
 import { AdminProvider } from "@shared/Context/Admin/Admin";
-import { ContentScriptMessagingClient } from "@shared/client/client";
 import waitForElement from "@shared/lib/waitForElement";
 import ContextItem from "@widgets/ContextItem/ContextItem";
 import Popup from "@widgets/Popup/Popup";
 import React from "react";
 import ReactDOM from "react-dom";
-import Logger from "shared/logger";
-import { ExtensionMessageType } from "types/extensionMessage";
-
-export const logger = new Logger();
-
-ContentScriptMessagingClient.sendMessage(ExtensionMessageType.GET_DEVMODE).then(
-    (devMode: boolean) => logger.setEnabled(devMode),
-);
-
-const contentScriptMessagingClient = new ContentScriptMessagingClient();
-
-contentScriptMessagingClient.addHandler(ExtensionMessageType.DEVMODE_UPDATED, (devMode: boolean) =>
-    logger.setEnabled(devMode),
-);
 
 // Render popup
 waitForElement("#end")

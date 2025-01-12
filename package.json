@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "lint": "eslint --cache .",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
     "format": "prettier --write \"**/*.{ts,tsx}\"",

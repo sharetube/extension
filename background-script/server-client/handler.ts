@@ -1,5 +1,5 @@
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
-import { logger } from "background-script/logging/logger";
+import { BgLogger } from "background-script/logging/logger";
 import { globalState, resetState } from "background-script/state";
 import { TabStorage } from "background-script/tabStorage";
 import { takeTargetPrimaryTabId } from "background-script/targetPrimaryTabId";
@@ -9,6 +9,7 @@ import browser from "webextension-polyfill";
 
 const bgMessagingClient = BackgroundMessagingClient.getInstance();
 const tabStorage = TabStorage.getInstance();
+const logger = BgLogger.getInstance();
 
 export function joinedRoom(
     payload: FromServerMessagePayloadMap[FromServerMessageType.JOINED_ROOM],
@@ -153,6 +154,6 @@ export const playerVideoUpdated = (
 };
 
 export const kickedFromRoom = (): void => {
-    logger.log("KICKED FROM ROOM", {});
+    logger.log("KICKED FROM ROOM");
     bgMessagingClient.sendMessageToPrimaryTab(ExtensionMessageType.KICKED);
 };

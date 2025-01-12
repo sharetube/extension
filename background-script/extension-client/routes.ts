@@ -53,7 +53,6 @@ bgMessagingClient.addHandler(EMT.IS_PRIMARY_TAB_EXISTS, Handler.isPrimaryTabExis
 bgMessagingClient.addHandler(EMT.REORDER_PLAYLIST, Handler.reorderPlaylist);
 
 // Devmode
-
 bgMessagingClient.addHandler(EMT.GET_DEVMODE, Handler.getDevMode);
 
 bgMessagingClient.addHandler(EMT.SET_DEVMODE, Handler.setDevMode);
