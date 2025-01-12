@@ -1,5 +1,5 @@
 import { BaseMessagingClient } from "../../shared/baseExtensionClient";
-import DevMode from "background-script/devMode";
+import { logger } from "background-script/logging/logger";
 import { TabStorage } from "background-script/tabStorage";
 import {
     ExtensionMessage,
@@ -29,9 +29,9 @@ export class BackgroundMessagingClient extends BaseMessagingClient {
         const message: ExtensionMessage<T> = { type, payload };
         browser.tabs
             .sendMessage(tabId, message)
-            .catch(err => DevMode.log("failed to send to tab", { err, tabId }));
+            .catch(err => logger.log("failed to send to tab", { err, tabId }));
 
-        DevMode.log(`sending message to tab ${tabId}`, message);
+        logger.log(`sending message to tab ${tabId}`, message);
     }
 
     public async sendMessageToPrimaryTab<T extends ExtensionMessageType>(
@@ -40,15 +40,15 @@ export class BackgroundMessagingClient extends BaseMessagingClient {
     ): Promise<void> {
         const primaryTabId = await this.tabStorage.getPrimaryTab();
         if (!primaryTabId) {
-            DevMode.log("Error trying send to primary tab: no primary tab found");
+            logger.log("Error trying send to primary tab: no primary tab found");
             return;
         }
 
         const message: ExtensionMessage<T> = { type, payload };
-        DevMode.log("sending message to primary tab", message);
+        logger.log("sending message to primary tab", message);
         browser.tabs
             .sendMessage(primaryTabId, message)
-            .catch(err => DevMode.log(`failed to send to primary tab: ${err}`));
+            .catch(err => logger.log(`failed to send to primary tab: ${err}`));
     }
 
     public broadcastMessage<T extends ExtensionMessageType>(
@@ -60,7 +60,7 @@ export class BackgroundMessagingClient extends BaseMessagingClient {
             browser.tabs
                 .sendMessage(tabId, message)
                 .catch(err =>
-                    DevMode.log(`failed to send to tab while broadcasting`, { err, tabId }),
+                    logger.log(`failed to send to tab while broadcasting`, { err, tabId }),
                 );
         });
     }

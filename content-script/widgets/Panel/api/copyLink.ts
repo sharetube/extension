@@ -1,5 +1,5 @@
 import { ContentScriptMessagingClient } from "@shared/client/client";
-import DevMode from "@shared/client/devMode";
+import { logger } from "@tabs/All/All";
 import { ExtensionMessageType } from "types/extensionMessage";
 
 function callOncePerInterval(func: () => void, delay: number) {
@@ -29,7 +29,7 @@ const copyLink = () => {
         const link = `https://youtu.be/st/${payload}`;
         throttledCopyLink();
         navigator.clipboard.writeText(link);
-        DevMode.log("LINK COPIED", { link });
+        logger.log("LINK COPIED", { link });
     });
 };
 

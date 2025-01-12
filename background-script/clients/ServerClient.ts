@@ -1,4 +1,4 @@
-import DevMode from "background-script/devMode";
+import { logger } from "@tabs/All/All";
 import { globalState } from "background-script/state";
 import config from "config";
 import debounce from "lodash.debounce";
@@ -56,17 +56,17 @@ class ServerClient {
     private addListeners() {
         if (!this.ws) return;
         this.ws.onerror = event => {
-            DevMode.log("WS: ERROR", event);
+            logger.log("WS: ERROR", event);
             this.close();
         };
 
         this.ws.onclose = (event: CloseEvent) => {
-            DevMode.log("WS: CLOSED", { ...event });
+            logger.log("WS: CLOSED", { ...event });
             const handler = this.closeCodeHandlers.get(event.code);
             if (handler) {
                 handler();
             } else {
-                DevMode.log("WS: UNKNOWN CLOSE CODE", { code: event.code });
+                logger.log("WS: UNKNOWN CLOSE CODE", { code: event.code });
             }
 
             this.close();
@@ -76,15 +76,15 @@ class ServerClient {
             this.debouncedKeepAlive();
             try {
                 const { type, payload } = JSON.parse(data);
-                DevMode.log("WS: FROM", { type, payload });
+                logger.log("WS: FROM", { type, payload });
                 const handler = this.handlers.get(type);
                 if (handler) {
                     handler(payload);
                 } else {
-                    DevMode.log("WS: UNKNOWN MESSAGE TYPE", { type });
+                    logger.log("WS: UNKNOWN MESSAGE TYPE", { type });
                 }
             } catch (error) {
-                DevMode.log(`WS ERROR: Parsing message: ${error}`);
+                logger.log(`WS ERROR: Parsing message: ${error}`);
             }
         };
     }
@@ -108,14 +108,14 @@ class ServerClient {
 
     public createRoom(profile: ProfileType, videoUrl: string): Promise<void> {
         const params = this.buildParams(profile, { "video-url": videoUrl });
-        DevMode.log("WS: CREATING ROOM", { ...params });
+        logger.log("WS: CREATING ROOM", { ...params });
         // todo: implement WSConnectionURLBuilder
         return this.init(`wss://${baseUrl}/api/v1/ws/room/create?${buildQueryParams(params)}`);
     }
 
     public joinRoom(profile: ProfileType, room_id: string): Promise<void> {
         const params = this.buildParams(profile, globalState.jwt ? { jwt: globalState.jwt } : {});
-        DevMode.log("WS: JOINING ROOM", { ...params });
+        logger.log("WS: JOINING ROOM", { ...params });
         return this.init(
             `wss://${baseUrl}/api/v1/ws/room/${room_id}/join?${buildQueryParams(params)}`,
         );
@@ -126,7 +126,7 @@ class ServerClient {
         const message = JSON.stringify({ type, payload: payload || null });
         this.debouncedKeepAlive();
         this.ws.send(message);
-        DevMode.log("WS: TO", { type, payload });
+        logger.log("WS: TO", { type, payload });
     }
 
     public close() {
@@ -136,7 +136,7 @@ class ServerClient {
         this.ws.close();
         this.removeListeners();
         this.ws = undefined;
-        DevMode.log("WS: CLOSED", {});
+        logger.log("WS: CLOSED", {});
     }
 
     public addHandler<T extends FromServerMessageType>(type: T, handler: MessageHandler<T>): void {

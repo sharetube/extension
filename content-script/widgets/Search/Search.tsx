@@ -3,7 +3,7 @@ import useKey from "./hooks/useKey";
 import useAdmin from "@shared/Context/Admin/hooks/useAdmin";
 import { ContentScriptMessagingClient } from "@shared/client/client";
 import AddIcon from "@shared/ui/AddIcon/AddIcon";
-import DevMode from "background-script/devMode";
+import { logger } from "@tabs/All/All";
 import React, { useState } from "react";
 import { ExtensionMessageType } from "types/extensionMessage";
 
@@ -25,7 +25,7 @@ const Search: React.FC = () => {
                 add(videoId);
                 setInputValue("");
             })
-            .catch(error => DevMode.log("SEARCH INPUT ERROR", { ...error }));
+            .catch(error => logger.log("SEARCH INPUT ERROR", { ...error }));
     };
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") handleAdd();

@@ -1,5 +1,5 @@
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
-import DevMode from "background-script/devMode";
+import { logger } from "background-script/logging/logger";
 import { globalState, resetState } from "background-script/state";
 import { TabStorage } from "background-script/tabStorage";
 import { takeTargetPrimaryTabId } from "background-script/targetPrimaryTabId";
@@ -32,7 +32,7 @@ export function joinedRoom(
         tabStorage.addTab(targetPrimaryTabId);
         tabStorage.setPrimaryTab(targetPrimaryTabId);
     } else {
-        DevMode.log("No target primary tab found");
+        logger.log("No target primary tab found");
     }
 }
 
@@ -153,6 +153,6 @@ export const playerVideoUpdated = (
 };
 
 export const kickedFromRoom = (): void => {
-    DevMode.log("KICKED FROM ROOM", {});
+    logger.log("KICKED FROM ROOM", {});
     bgMessagingClient.sendMessageToPrimaryTab(ExtensionMessageType.KICKED);
 };

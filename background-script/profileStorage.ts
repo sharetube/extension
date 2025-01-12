@@ -6,8 +6,6 @@ export class ProfileStorage {
     private static _instance: ProfileStorage;
     private readonly STORAGE_KEY = "st-profile";
 
-    private constructor() {}
-
     public static getInstance(): ProfileStorage {
         if (!ProfileStorage._instance) {
             ProfileStorage._instance = new ProfileStorage();

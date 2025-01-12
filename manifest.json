@@ -36,7 +36,7 @@
     "{{firefox}}.scripts": ["background-script/index.ts"],
     "{{firefox}}.persistent": true
   },
-  "{{chrome}}.action": {
+  "action": {
     "default_popup": "pages/popup/popup.html"
   },
   "{{chrome}}.minimum_chrome_version": "116",

@@ -1,5 +1,5 @@
 import { BaseMessagingClient } from "../../../shared/baseExtensionClient";
-import DevMode from "background-script/devMode";
+import { logger } from "background-script/logging/logger";
 import {
     ExtensionMessage,
     ExtensionMessagePayloadMap,
@@ -19,12 +19,12 @@ export class ContentScriptMessagingClient extends BaseMessagingClient {
     ): Promise<any> {
         const message: ExtensionMessage<T> = { type, payload };
         try {
-            DevMode.log("sending message to bg worker", message);
+            logger.log("sending message to bg worker", message);
             const response = await browser.runtime.sendMessage(message);
-            DevMode.log("recieved response", response as logObject);
+            logger.log("recieved response", response as logObject);
             return response;
         } catch (error) {
-            DevMode.log(`Error sending message: ${error}`);
+            logger.log(`Error sending message: ${error}`);
             throw error;
         }
     }

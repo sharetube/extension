@@ -1,4 +1,4 @@
-import DevMode from "./devMode";
+import { logger } from "./logging/logger";
 import browser from "webextension-polyfill";
 
 export class TabStorage {
@@ -31,7 +31,7 @@ export class TabStorage {
     }
 
     public setPrimaryTab(tabId: number): Promise<void> {
-        DevMode.log("Setting primary tab", { tabId: tabId });
+        logger.log("Setting primary tab", { tabId: tabId });
         return browser.storage.local.set({ [this.PRIMARY_TAB_STORAGE_KEY]: tabId });
     }
 

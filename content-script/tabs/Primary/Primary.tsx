@@ -1,8 +1,8 @@
 import Player from "@player/player";
 import { AdminProvider } from "@shared/Context/Admin/Admin";
 import { ContentScriptMessagingClient } from "@shared/client/client";
-import DevMode from "@shared/client/devMode";
 import waitForElement from "@shared/lib/waitForElement";
+import { logger } from "@tabs/All/All";
 import Panel from "@widgets/Panel/Panel";
 import Search from "@widgets/Search/Search";
 import React from "react";
@@ -89,7 +89,7 @@ let player: Player | null = null;
 function initPlayer() {
     waitForElement(".html5-video-player").then(e => {
         waitForElement("video").then(p => {
-            DevMode.log("PLAYER FOUND", { ...p });
+            logger.log("PLAYER FOUND", { ...p });
             player = new Player(e, p as HTMLVideoElement);
         });
         // .catch(error => console.log("Failed select video element", error));

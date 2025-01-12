@@ -31,7 +31,6 @@ export abstract class BaseMessagingClient {
     ): Promise<any> {
         const handler = this.handlers.get(message.type);
         if (handler) {
-            // DevMode.log("handling incoming message", message);
             return handler(message.payload, sender);
         }
     }

@@ -1,7 +1,8 @@
 import { setTargetPrimaryTabId } from "../targetPrimaryTabId";
 import { BackgroundMessagingClient } from "background-script/clients/ExtensionClient";
 import ServerClient from "background-script/clients/ServerClient";
-import DevMode from "background-script/devMode";
+import { DebugModeStorage } from "background-script/logging/debugModeStorage";
+import { logger } from "background-script/logging/logger";
 import { ProfileStorage } from "background-script/profileStorage";
 import { globalState } from "background-script/state";
 import { getPrimaryTabIdOrUnset } from "background-script/tab";
@@ -18,6 +19,7 @@ import browser from "webextension-polyfill";
 const server = ServerClient.getInstance();
 
 const profileStorage = ProfileStorage.getInstance();
+const debugModeStorage = DebugModeStorage.getInstance();
 const bgMessagingClient = BackgroundMessagingClient.getInstance();
 const tabStorage = TabStorage.getInstance();
 
@@ -126,7 +128,7 @@ export async function createRoom(
     if (sender?.tab?.id !== undefined) setTargetPrimaryTabId(sender.tab.id);
     const profile = await profileStorage.get();
     server.createRoom(profile, payload.videoUrl).then(() => {
-        DevMode.log("ROOM CREATED", { videoUrl: payload.videoUrl });
+        logger.log("ROOM CREATED", { videoUrl: payload.videoUrl });
     });
 }
 
@@ -159,9 +161,11 @@ export function reorderPlaylist(payload: EMPM[EMType.REORDER_PLAYLIST]): void {
 }
 
 export function setDevMode(payload: EMPM[EMType.SET_DEVMODE]): void {
-    DevMode.setEnabled(payload);
+    logger.setEnabled(payload);
+    debugModeStorage.set(payload);
+    bgMessagingClient.broadcastMessage(ExtensionMessageType.DEVMODE_UPDATED, payload);
 }
 
 export function getDevMode(): EMRM[EMType.GET_DEVMODE] {
-    return DevMode.isEnabled();
+    return logger.getEnabled();
 }

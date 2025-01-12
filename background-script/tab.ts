@@ -1,6 +1,6 @@
 import { BackgroundMessagingClient } from "./clients/ExtensionClient";
 import ServerClient from "./clients/ServerClient";
-import DevMode from "./devMode";
+import { logger } from "./logging/logger";
 import { ProfileStorage } from "./profileStorage";
 import { globalState } from "./state";
 import { TabStorage } from "./tabStorage";
@@ -93,7 +93,7 @@ browser.webNavigation.onBeforeNavigate.addListener(
 );
 
 browser.tabs.onRemoved.addListener(async tabId => {
-    DevMode.log("tab removed", { tabdId: tabId });
+    logger.log("tab removed", { tabdId: tabId });
     getPrimaryTabIdOrUnset();
 });
 
