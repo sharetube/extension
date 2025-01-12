@@ -4,16 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-<<<<<<< HEAD
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
-||||||| 8725164
-    "lint": "eslint --cache .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky",
-=======
->>>>>>> d494ed7f3181e6caf37fc84fa2d209eb5ed9cc3c
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx}\"",
     "build": "tsc && vite build",
