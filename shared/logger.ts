@@ -5,7 +5,7 @@ class Logger {
 
     public log(msg: string, obj?: logObject): void {
         if (this.enabled) {
-            console.log(JSON.stringify({ message: msg, timestamp: Date.now(), ...obj }));
+            console.log(JSON.stringify({ timestamp: Date.now(), message: msg, ...obj }));
         }
     }
 

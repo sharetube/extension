@@ -1,59 +1,59 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="../assets/icon48.png" />
-        <link rel="stylesheet" href="loading.css" />
-        <style>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../icon48.png" />
+    <style>
+        html {
+            background-color: #ffffff;
+            color: #0f0f0f;
+        }
+
+        @media (prefers-color-scheme: dark) {
             html {
-                background-color: #ffffff;
-                color: #0f0f0f;
+                background-color: #0f0f0f;
+                color: #ffffff;
             }
-            @media (prefers-color-scheme: dark) {
-                html {
-                    background-color: #0f0f0f;
-                    color: #ffffff;
-                }
-            }
+        }
 
-            body {
-                display: flex;
-                height: 100vh;
-            }
+        body {
+            display: flex;
+            height: 100vh;
+        }
 
-            .container {
-                margin: auto;
-            }
+        .container {
+            margin: auto;
+        }
 
-            .gif {
-                width: 100px;
-                height: 100px;
-                border-radius: 8px;
-            }
+        .gif {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+        }
 
-            .text {
-                font-size: 1.5rem;
-                font-weight: 500;
-                margin: 25px 0 0;
-                padding: 0;
-                text-align: center;
-            }
+        .text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 25px 0 0;
+            padding: 0;
+            text-align: center;
+        }
 
-            .text,
-            .gif {
-                user-select: none;
-            }
-        </style>
-        <title>ShareTube</title>
-    </head>
-    <body>
-        <div class="container">
-            <img
-                src="./cat-sleep.gif"
-                class="gif"
-            ></img>
-            <p class="text">Loading...</p>
-        </div>
-    </body>
+        .text,
+        .gif {
+            user-select: none;
+        }
+    </style>
+    <title>ShareTube</title>
+</head>
+
+<body>
+    <div class="container">
+        <img src="./cat-sleep.gif" class="gif"></img>
+        <p class="text">Loading...</p>
+    </div>
+</body>
+
 </html>
