@@ -39,27 +39,23 @@ const handleTab = async (tabId: number, url: string) => {
     if (primaryTabId) {
         if (primaryTabId === tabId) {
             server.close();
-
-            setTargetPrimaryTabId(tabId);
-            const profile = await profileStorage.get();
-            server.joinRoom(profile, roomId).catch(() => {
-                showErrorPage();
-            });
         } else {
             browser.tabs.update(primaryTabId, { active: true });
             browser.tabs.remove(tabId);
+            return;
         }
     } else {
-        const profile = await profileStorage.get();
         // show loading screen
         browser.tabs.update(tabId, {
             url: browser.runtime.getURL("/pages/loading.html"),
         });
-
-        server.joinRoom(profile, roomId).catch(() => {
-            showErrorPage();
-        });
     }
+
+    setTargetPrimaryTabId(tabId);
+    const profile = await profileStorage.get();
+    server.joinRoom(profile, roomId).catch(() => {
+        showErrorPage();
+    });
 };
 
 async function clearPrimaryTab() {

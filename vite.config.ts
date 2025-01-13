@@ -18,9 +18,9 @@ export default defineConfig(({}) => {
             react(),
             webExtension({
                 browser: browser,
+                additionalInputs: ["pages/error.html", "pages/loading.html", "pages/cat-sleep.gif"],
             }),
             tsconfigPaths(),
-            // { ...fixManifestOut(outDir, browser), enforce: "post" },
         ],
         resolve: {
             alias: {

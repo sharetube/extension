@@ -7,13 +7,9 @@ export default {
     tailwindcss,
     autoprefixer,
     postcssPrefixSelector({
+      ignoreFiles: [/\/pages/],
+      exclude: [":root", "html", "body"],
       prefix: ".sharetube",
-      transform(_, selector, prefixedSelector) {
-        if (selector.startsWith(":root")) {
-          return selector;
-        }
-        return prefixedSelector;
-      },
     }),
   ],
 };

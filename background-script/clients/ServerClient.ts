@@ -46,12 +46,14 @@ class ServerClient {
         return new Promise((resolve, reject) => {
             if (this.ws) reject(new Error("ws already open"));
 
-            connectToWS(url).then(ws => {
-                this.ws = ws;
-                this.addListeners();
-                this.debouncedKeepAlive();
-                resolve();
-            });
+            connectToWS(url)
+                .then(ws => {
+                    this.ws = ws;
+                    this.addListeners();
+                    this.debouncedKeepAlive();
+                    resolve();
+                })
+                .catch(reject);
         });
     }
 

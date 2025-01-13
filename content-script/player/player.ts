@@ -75,7 +75,7 @@ class Player {
         this.contentScriptMessagingClient.addHandler(
             ExtensionMessageType.PLAYER_STATE_UPDATED,
             (state: ExtensionMessagePayloadMap[ExtensionMessageType.PLAYER_STATE_UPDATED]) => {
-                logger.log("player state updated", state);
+                logger.log("recieved new player state", state);
                 if (this.adShowing) return;
                 this.setState(state);
             },
@@ -164,6 +164,7 @@ class Player {
     }
 
     private sendSkip() {
+        logger.log("sending skip");
         ContentScriptMessagingClient.sendMessage(
             ExtensionMessageType.SKIP_CURRENT_VIDEO,
             dateNowInUs(),
@@ -180,6 +181,7 @@ class Player {
     //? add same for isReady true
     private udpateIsReadyFalseTimeout: NodeJS.Timeout | undefined;
     private setUpdateIsReadyFalseTimeout(): void {
+        logger.log("setUpdateIsReadyFalseTimeout");
         this.clearUpdateIsReadyFalseTimeout();
         this.udpateIsReadyFalseTimeout = setTimeout(() => {
             if (!this.isReady) return;
@@ -204,7 +206,7 @@ class Player {
     private handleKeyDown(event: KeyboardEvent) {
         switch (event.key) {
             case "ArrowRight":
-                logger.log("ArrowRight: video diration, current time");
+                logger.log("ArrowRight");
                 this.ignorePlayCount--;
                 if (this.isAdmin && this.player.duration - this.player.currentTime < 5) {
                     this.sendSkip();
@@ -228,17 +230,19 @@ class Player {
 
     private handleEnded() {
         logger.log("ended");
-        if (this.isAdmin) {
-            this.sendSkip();
+        if (!this.isAdmin) {
+            logger.log("ended ignored because is not admin");
+            return;
         }
+        this.sendSkip();
     }
 
     private handleEmptied() {
-        logger.log("emptied");
         if (this.adShowing) {
-            logger.log("ignored emptied because ad is showing");
+            logger.log("emptied ignored because ad is showing");
             return;
         }
+        logger.log("emptied");
 
         this.adShowing = false;
         this.ignoreSeekingCount = 0;
@@ -249,9 +253,8 @@ class Player {
     }
 
     private handlePause() {
-        logger.log("pause");
         if (this.adShowing) {
-            logger.log("ignored pause because ad is showing");
+            logger.log("pause ignored because ad is showing");
             return;
         }
 
@@ -261,16 +264,17 @@ class Player {
             return;
         }
 
+        logger.log("pause");
         this.handleStateChanged();
     }
 
     private handleCanplay() {
-        logger.log("canplay");
         if (this.adShowing) {
-            logger.log("ignored canplay because ad is showing");
+            logger.log("canplay ignored because ad is showing");
             return;
         }
 
+        logger.log("canplay");
         if (!this.clearUpdateIsReadyFalseTimeout()) {
             if (this.isReady) return;
             this.isReady = true;
@@ -280,24 +284,18 @@ class Player {
     }
 
     private handleLoadedData() {
-        logger.log("loaded data");
         if (this.adShowing) {
-            logger.log("ignored loaded data because ad is showing");
+            logger.log("loaded data ignored because ad is showing");
             return;
         }
 
+        logger.log("loaded data");
         this.isDataLoaded = true;
     }
 
     private handlePlay() {
-        logger.log("play");
         if (this.adShowing) {
-            logger.log("ignored play because ad is showing");
-            return;
-        }
-        if (!this.isPlayAfterEndedHandled) {
-            this.isPlayAfterEndedHandled = true;
-            this.setActualState();
+            logger.log("play ignored because ad is showing");
             return;
         }
 
@@ -312,13 +310,19 @@ class Player {
             return;
         }
 
+        logger.log("play");
+        if (!this.isPlayAfterEndedHandled) {
+            this.isPlayAfterEndedHandled = true;
+            this.setActualState();
+            return;
+        }
+
         this.handleStateChanged();
     }
 
     private handleSeeking() {
-        logger.log("seeking");
         if (this.adShowing) {
-            logger.log("ignored seeking because ad is showing");
+            logger.log("seeking ignored because ad is showing");
             return;
         }
 
@@ -328,19 +332,20 @@ class Player {
             return;
         }
 
+        logger.log("seeking");
         if (this.isDataLoaded && this.getIsPlaying()) {
-            logger.log("ignore play count ++", { playCountBefore: this.ignorePlayCount });
+            // logger.log("ignore play count ++", { playCountBefore: this.ignorePlayCount });
             this.ignorePlayCount++;
         }
         this.handleStateChanged();
     }
 
     private handleRatechange() {
-        logger.log("ratechange");
         if (this.adShowing) {
-            logger.log("ignored ratechange because ad is showing");
+            logger.log("ratechange ignored because ad is showing");
             return;
         }
+        logger.log("ratechange");
 
         this.handleStateChanged();
     }
@@ -351,13 +356,13 @@ class Player {
     }
 
     private handleMute() {
-        logger.log("mute");
         if (this.player.muted === this.muted) {
+            logger.log("mute ignored");
             return;
-        } else {
-            this.muted = this.player.muted;
-            this.sendMute();
         }
+        logger.log("mute");
+        this.muted = this.player.muted;
+        this.sendMute();
     }
 
     public setState(state: PlayerStateType) {
@@ -370,11 +375,9 @@ class Player {
             this.isPlayAfterEndedHandled = false;
         } else {
             if (state.is_playing) {
-                ct =
-                    Math.round(
-                        state.current_time +
-                            (dateNowInUs() - state.updated_at) * state.playback_rate,
-                    ) / 1e6;
+                const delta = dateNowInUs() - state.updated_at;
+                ct = Math.round(state.current_time + delta * state.playback_rate) / 1e6;
+                logger.log("delta", { delta });
             } else {
                 ct = state.current_time / 1e6;
             }
@@ -418,13 +421,14 @@ class Player {
             is_ended: false,
             is_playing: this.getIsPlaying(),
         };
-        logger.log("get state returned: ", s);
+        logger.log("get state returned", s);
         return s;
     }
 
     private handleStateChanged() {
         if (!this.isReady) return;
         if (this.isAdmin) {
+            logger.log("sending state to server");
             ContentScriptMessagingClient.sendMessage(
                 ExtensionMessageType.UPDATE_PLAYER_STATE,
                 this.getState(),
@@ -465,7 +469,7 @@ class Player {
         const adShowing = cl.contains("ad-showing");
         if (this.adShowing === adShowing) return;
 
-        logger.log("ad showing", { was: this.adShowing, now: adShowing });
+        logger.log("ad changed", { was: this.adShowing, now: adShowing });
         this.adShowing = adShowing;
         if (this.adShowing) {
             this.isReady = false;
