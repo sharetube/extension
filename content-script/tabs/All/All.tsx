@@ -46,6 +46,7 @@ const handleClick = (e: MouseEvent) => {
         "ytd-grid-video-renderer",
         "ytd-video-renderer",
         "ytd-watch-metadata",
+        "ytd-playlist-panel-video-renderer",
     ];
 
     let enteredIf: boolean = false;
